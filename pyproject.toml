@@ -1,0 +1,26 @@
+[project]
+name = "doog-can"
+version = "0.1.0"
+license = "MIT"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "scp7518137", email = "15754910+scp157130@user.noreply.gitee.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "python-can>=4.6.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.21,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"

@@ -55,6 +55,6 @@ def test_ask_status():
     assert data.hex() == "1000000000000000"
 
 def test_ask_Opentoangle():
-    frame_id, data = build_frame(node_id=1, cmd=17, value=1)
+    frame_id, data = build_frame(node_id=1, cmd=9, value=1)
     assert frame_id == 0x101
-    assert data.hex() == "1100000000000000"
+    assert data.hex() == "0900000000000000"

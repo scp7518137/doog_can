@@ -54,8 +54,8 @@ class CmdList(IntEnum):
     POSITION = 0x06
     OPENTOANGLE = 0x07
     KEEPALIVE = 0x08
+    ASKOPENTOANGLE = 0x09
     ASKSTATUS = 0x10
-    ASKOPENTOANGLE = 0x11
 
 
 class CommandMode(IntEnum):

@@ -11,7 +11,7 @@ def can_init() -> can.BusABC:
     Returns:
         The initialized CAN bus instance.
     """
-    bus = can.Bus(channel = "can0", interface="socketcan")
+    bus = can.Bus(channel = "can1", interface="socketcan")
     return bus
 
 def vbus_init(name) -> tuple[can.BusABC, can.BusABC]:

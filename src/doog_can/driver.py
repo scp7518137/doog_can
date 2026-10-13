@@ -50,8 +50,8 @@ class Motor:
         if msg is None:
             raise TimeoutError("Timeout")
         msg_id = msg.arbitration_id
-        if msg_id != self._feedback_frame_id:
-            raise IDError
+        # if msg_id != self._feedback_frame_id:
+        #     raise IDError
         msg_data = bytes(msg.data)
         report: StatusReport = decode_frame(msg_data)
         return msg_id, report

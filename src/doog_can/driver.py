@@ -50,11 +50,11 @@ class Motor:
         if msg is None:
             raise TimeoutError("Timeout")
         msg_id = msg.arbitration_id
-        # if msg_id != self._feedback_frame_id:
-        #     raise IDError
+        if msg_id != self._feedback_frame_id:
+            raise IDError
         msg_data = bytes(msg.data)
         report: StatusReport = decode_frame(msg_data)
-        return msg_id, report
+        return msg_id - 0x200, report
 
     def _msg_opentoangle_receive(self) -> tuple[int, OpenToAngle]:
         """Receive and decode an open-to-angle response.
@@ -93,7 +93,12 @@ class Motor:
         """Send a mode command.
 
         Args:
-            value: Value sent with the command.
+            0	IDLE	                no output
+            1	open-loop	            open-loop voltage/speed drive
+            2	closed-loop spead	    speed loop -> current loop
+            3	align	                two-step rotor alignment
+            4   closed-loop position	position loop -> speed loop -> current loop
+            5	closed-loop torque      with Iq directly commanded
         """
         self._msg_send(CmdList.MODE, value)
 
@@ -154,13 +159,3 @@ class Motor:
         """
         self._msg_send(CmdList.ASKOPENTOANGLE)
         return self._msg_opentoangle_receive()
-
-    def _test_msg_recelive(self) -> can.Message:
-        msg: can.Message | None = self._bus.recv(timeout = 1.0)
-        assert msg is not None
-        return msg
-
-    def can_test(self) -> None:
-        self._msg_send(CmdList.ASKSTATUS)
-        msg = self._test_msg_recelive()
-        print(msg)

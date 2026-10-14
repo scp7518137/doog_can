@@ -1,7 +1,7 @@
 import can
 import doog_can as dc
 
-bus1 = dc.can_init()
+bus1 = dc.can_init("can1")
 motor1 = dc.Motor(bus=bus1, node_id=1)
 id, msg = motor1.ask_status()
 print(f"this id is motor{id}")

@@ -5,13 +5,16 @@ from .constants import (
     COMM_TIMEOUT_MS,
 )
 
-def can_init() -> can.BusABC:
+def can_init(can) -> can.BusABC:
     """Open the real CAN bus interface (socketcan channel can0).
+    
+    Args:
+        can: can0 / can1
 
     Returns:
         The initialized CAN bus instance.
     """
-    bus = can.Bus(channel = "can1", interface="socketcan")
+    bus = can.Bus(channel = can, interface="socketcan")
     return bus
 
 def vbus_init(name) -> tuple[can.BusABC, can.BusABC]:

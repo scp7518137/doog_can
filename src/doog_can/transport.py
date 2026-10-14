@@ -9,7 +9,7 @@ def can_init(mycan) -> can.BusABC:
     """Open the real CAN bus interface (socketcan channel can0).
     
     Args:
-        can: "can0" / "can1"
+        mycan: "can0" / "can1"
 
     Returns:
         The initialized CAN bus instance.

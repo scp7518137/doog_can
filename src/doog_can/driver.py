@@ -154,3 +154,13 @@ class Motor:
         """
         self._msg_send(CmdList.ASKOPENTOANGLE)
         return self._msg_opentoangle_receive()
+
+    def _test_msg_recelive(self) -> can.Message:
+        msg: can.Message | None = self._bus.recv(timeout = 1.0)
+        assert msg is not None
+        return msg
+
+    def can_test(self) -> None:
+        self._msg_send(CmdList.ASKSTATUS)
+        msg = self._test_msg_recelive()
+        print(msg)

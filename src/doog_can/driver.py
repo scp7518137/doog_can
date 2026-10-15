@@ -77,7 +77,7 @@ class Motor:
         """Send a speed command.
 
         Args:
-            value: Value sent with the command.
+            value: Value sent with the command rad/s.
         """
         self._msg_send(CmdList.SPEED, value)
 
@@ -85,7 +85,7 @@ class Motor:
         """Send a voltage command.
 
         Args:
-            value: Value sent with the command.
+            value: Value sent with the command V.
         """
         self._msg_send(CmdList.VOLTAGE, value)
 
@@ -106,7 +106,8 @@ class Motor:
         """Send a direction command.
 
         Args:
-            value: Value sent with the command.
+            0  Forward rotation
+            1  Reverse rotation
         """
         self._msg_send(CmdList.DIRECTION, value)
 
@@ -114,7 +115,7 @@ class Motor:
         """Send a torque command.
 
         Args:
-            value: Value sent with the command.
+            value: Value sent with the command N * M.
         """
         self._msg_send(CmdList.TORQUE, value)
 
@@ -130,7 +131,7 @@ class Motor:
         """Send an open-to-angle command.
 
         Args:
-            value: Value sent with the command.
+            value: Value sent with the command deg.
         """
         self._msg_send(CmdList.OPENTOANGLE, value)
     

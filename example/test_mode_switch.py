@@ -23,13 +23,13 @@ i += 1
 print("此时为模式1开环模式检测")
 msg_ask(i)
 
-# motor1.set_mode(3)
-# i += 1
-# print("此时为模式3对齐模式检测")
-# msg_ask(i)
+motor1.set_mode(3)
+i += 1
+print("此时为模式3对齐模式检测")
+msg_ask(i)
 
 print("开始暂停 测试ka1")
-time.sleep(10)
+time.sleep(2)
 print("暂停结束,关闭ka1 bus1")
 ka1.stop()
 bus1.shutdown()

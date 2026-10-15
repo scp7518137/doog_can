@@ -20,3 +20,20 @@ can_text:
 can_down:
 		sudo ip link set can1 down
 		ip -details link show can1
+
+can_reset:
+		$(MAKE) can_down
+		$(MAKE) can_up
+
+usb_ssh1:
+		ip -br a
+
+usb_ssh2:
+		sudo ip link set "$(MAC)" up
+		cat /sys/class/net/"$(MAC)"/carrier
+		sudo ip addr add 10.5.0.1/24 "$(MAC)"
+
+usb_board:
+		sudo modprobe g_ether
+		sudo ip link set usb0 up
+		sudo ip addr add 10.55.0.2/24 dev usb0

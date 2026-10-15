@@ -20,12 +20,11 @@ can_text:
 
 can_down:
 		@sudo ip link set $(CAN) down
-		@ip -details link show $(CAN)
 		@echo "=====$(CAN) down====="
 
 can_reset:
 		@$(MAKE) can_down
-		@$(MAKE) can_up
+		@sudo ip link set $(CAN) up
 		@echo "=====$(CAN) reset====="
 
 usb_check_MAC:

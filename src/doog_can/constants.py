@@ -62,17 +62,18 @@ class CommandMode(IntEnum):
     """
     0	IDLE	                No output.
     1	open-loop	            Open-loop voltage/speed drive.
-    2	closed-loop speed	    Speed loop -> current loop.
-    3	align	                Two-step rotor alignment.
-    4   closed-loop position	Position loop -> speed loop -> current loop.
-    5	closed-loop torque      With Iq directly commanded.
+    2	align	                Two-step rotor alignment.
+    3	closed-loop torque      With Iq directly commanded.
+    4   closed-loop speed	    Speed loop -> current loop.
+    5	closed-loop position	Position loop -> speed loop -> current loop.
+
     """
     IDLE = 0
     OPENLOOP = 1
-    CLOSED_SPEED = 2
-    ALIGN = 3
-    CLOSED_POSITION = 4
-    CLOSED_TORQUE = 5
+    ALIGN = 2
+    CLOSED_TORQUE = 3
+    CLOSED_SPEED = 4
+    CLOSED_POSITION = 5
 
 
 class Direction(IntEnum):
@@ -88,18 +89,18 @@ class FeedbackMode(IntEnum):
     """
     0	IDLE	                No output.
     1	open-loop	            Open-loop voltage/speed drive.
-    2	closed-loop speed	    Speed loop -> current loop.
-    3	align	                Two-step rotor alignment.
-    4   closed-loop position	Position loop -> speed loop -> current loop.
-    5	closed-loop torque      With Iq directly commanded.
+    2	align	                Two-step rotor alignment.
+    3	closed-loop torque      With Iq directly commanded.
+    4   closed-loop speed	    Speed loop -> current loop.
+    5	closed-loop position	Position loop -> speed loop -> current loop.
     6   FAULT                   Fault state.
     """
     IDLE = 0
     OPENLOOP = 1
-    CLOSED_SPEED = 2
-    ALIGN = 3
-    CLOSED_POSITION = 4
-    CLOSED_TORQUE = 5
+    ALIGN = 2
+    CLOSED_TORQUE = 3
+    CLOSED_SPEED = 4
+    CLOSED_POSITION = 5
     FAULT = 6
 
 

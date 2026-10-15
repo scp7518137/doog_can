@@ -93,12 +93,13 @@ class Motor:
         """Send a mode command.
 
         Args:
-            0	IDLE	                no output
-            1	open-loop	            open-loop voltage/speed drive
-            2	closed-loop spead	    speed loop -> current loop
-            3	align	                two-step rotor alignment
-            4   closed-loop position	position loop -> speed loop -> current loop
-            5	closed-loop torque      with Iq directly commanded
+            0	IDLE	                No output.
+            1	open-loop	            Open-loop voltage/speed drive.
+            2	align	                Two-step rotor alignment.
+            3	closed-loop torque      With Iq directly commanded.
+            4   closed-loop speed	    Speed loop -> current loop.
+            5	closed-loop position	Position loop -> speed loop -> current loop.
+
         """
         self._msg_send(CmdList.MODE, value)
 

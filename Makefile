@@ -11,22 +11,22 @@ git_mirror_down:
 			@echo "⬇️ 已关闭 github 镜像"
 
 can_up:
-		@sudo ip link set can1 type can bitrate 1000000
-		@sudo ip link set can1 up
-		@echo "=====can1 up====="
+		@sudo ip link set $(CAN) type can bitrate 1000000
+		@sudo ip link set $(CAN) up
+		@echo "=====$(CAN) up====="
 
 can_text:
-		@ip -details link show can1
+		@ip -details link show $(CAN)
 
 can_down:
-		@sudo ip link set can1 down
-		@ip -details link show can1
-		@echo "=====can1 down====="
+		@sudo ip link set $(CAN) down
+		@ip -details link show $(CAN)
+		@echo "=====$(CAN) down====="
 
 can_reset:
 		@$(MAKE) can_down
 		@$(MAKE) can_up
-		@echo "=====can1 reset====="
+		@echo "=====$(CAN) reset====="
 
 usb_check_MAC:
 		@ip -br a

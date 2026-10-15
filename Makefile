@@ -33,7 +33,6 @@ usb_check_MAC:
 
 usb_set_MAC:
 		@sudo ip link set $(MAC) up
-		@cat /sys/class/net/$(MAC)/carrier
 		@sudo ip addr add 10.55.0.1/24 dev $(MAC)
 		@ping -c 10 10.55.0.2
 		@echo "=====computer set MAC====="
@@ -42,4 +41,15 @@ usb_board_set:
 		@sudo modprobe g_ether
 		@sudo ip link set usb0 up
 		@sudo ip addr add 10.55.0.2/24 dev usb0
+		@echo "=====board set MAC====="
+
+usb_reset_MAC:
+		@sudo ip link set $(MAC) up
+		@sudo ip addr replace 10.55.0.1/24 dev $(MAC)
+		@ping -c 10 10.55.0.2
+		@echo "=====computer set MAC====="
+
+usb_board_reset:
+		@sudo ip link set usb0 up
+		@sudo ip addr replace 10.55.0.2/24 dev usb0
 		@echo "=====board set MAC====="

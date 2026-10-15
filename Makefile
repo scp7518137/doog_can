@@ -41,5 +41,5 @@ usb_set_MAC:
 usb_board_set:
 		@sudo modprobe g_ether
 		@sudo ip link set usb0 up
-		@sudo ip addr add 10.5.0.2/24 dev usb0
+		@sudo ip addr add 10.55.0.2/24 dev usb0
 		@echo "=====board set MAC====="

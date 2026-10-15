@@ -25,15 +25,16 @@ can_reset:
 		$(MAKE) can_down
 		$(MAKE) can_up
 
-usb_ssh1:
+usb_check_MAC:
 		ip -br a
 
-usb_ssh2:
-		sudo ip link set "$(MAC)" up
-		cat /sys/class/net/"$(MAC)"/carrier
-		sudo ip addr add 10.5.0.1/24 "$(MAC)"
+usb_set_MAC:
+		sudo ip link set $(MAC) up
+		cat /sys/class/net/$(MAC)/carrier
+		sudo ip addr add 10.55.0.1/24 dev $(MAC)
+		ping -c 10 10.55.0.2
 
-usb_board:
+usb_board_set:
 		sudo modprobe g_ether
 		sudo ip link set usb0 up
-		sudo ip addr add 10.55.0.2/24 dev usb0
+		sudo ip addr add 10.5.0.2/24 dev usb0

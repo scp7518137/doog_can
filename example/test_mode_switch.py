@@ -23,10 +23,10 @@ i += 1
 print("此时为模式1开环模式检测")
 msg_ask(i)
 
-motor1.set_mode(3)
-i += 1
-print("此时为模式3对齐模式检测")
-msg_ask(i)
+# motor1.set_mode(3)
+# i += 1
+# print("此时为模式3对齐模式检测")
+# msg_ask(i)
 
 print("开始暂停 测试ka1")
 time.sleep(2)

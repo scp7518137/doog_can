@@ -46,7 +46,7 @@ class Motor:
             TimeoutError: Noresponse is received before the timeout.
             IDError: The received frame ID does not match the expected ID.
         """
-        msg = self._bus.recv(timeout = 5/100)
+        msg = self._bus.recv(timeout = 0.05)
         if msg is None:
             raise TimeoutError("Timeout")
         msg_id = msg.arbitration_id

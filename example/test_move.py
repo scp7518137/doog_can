@@ -6,8 +6,9 @@ from doog_can import StatusReport
 bus1 = dc.can_init("can1")
 # 定义bus1
 
+motor1 = dc.Motor(bus=bus1, node_id=1)
 motor2 = dc.Motor(bus=bus1, node_id=2)
-print("定义电机1")
+print("定义电机1/2")
 
 send_threading = dc.Transmit_Threading(bus=bus1)
 recv_threading = dc.Receive_Threading(bus=bus1)
@@ -20,57 +21,63 @@ try:
     recv_threading.my_start()
     ka1.start()
     print("开启发送线程/接受线程/保活")
-    
+
     send_threading.transmit_slot(motor2.mode_build(1))
 
+    send_threading.transmit_slot(motor1.open_to_angle_build(30))
     send_threading.transmit_slot(motor2.open_to_angle_build(30))
+
     time.sleep(3)
 
+    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
+
+
+    msg_recv = recv_threading.receive_slot()
+    assert msg_recv is not None
+    id, model = motor1.msg_recv(msg_recv)
+    print(f"id is {id}, model is {model}")
 
     msg_recv = recv_threading.receive_slot()
     assert msg_recv is not None
     id, model = motor2.msg_recv(msg_recv)
     print(f"id is {id}, model is {model}")
 
+    send_threading.transmit_slot(motor1.open_to_angle_build(60))
     send_threading.transmit_slot(motor2.open_to_angle_build(-30))
     time.sleep(3)
 
+    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
+
+    msg_recv = recv_threading.receive_slot()
+    assert msg_recv is not None
+    id, model = motor1.msg_recv(msg_recv)
+    print(f"id is {id}, model is {model}")
+
     msg_recv = recv_threading.receive_slot()
     assert msg_recv is not None
     id, model = motor2.msg_recv(msg_recv)
     print(f"id is {id}, model is {model}")
 
+    send_threading.transmit_slot(motor1.open_to_angle_build(90))
     send_threading.transmit_slot(motor2.open_to_angle_build(30))
     time.sleep(3)
 
+    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
+
+    msg_recv = recv_threading.receive_slot()
+    assert msg_recv is not None
+    id, model = motor1.msg_recv(msg_recv)
+    print(f"id is {id}, model is {model}")
+
     msg_recv = recv_threading.receive_slot()
     assert msg_recv is not None
     id, model = motor2.msg_recv(msg_recv)
     print(f"id is {id}, model is {model}")
 
-    # for i in range(6):
-    #     msg = motor2.mode_build(i)
-    #     print(f"切换为模式{i}")
-    #     assert msg is not None
-    #     send_threading.transmit_slot(msg)
 
-    #     msg = motor2.ask_status_build()
-    #     print("查询状态")
-    #     assert msg is not None
-    #     send_threading.transmit_slot(msg)
-
-    #     msg_recv = recv_threading.receive_slot()
-    #     assert msg_recv is not None
-    #     id, model = motor2.msg_recv(msg_recv)
-    #     print(f"id is {id}, model is {model}")
-
-    # ka1.stop()
-    # send_threading.my_stop()
-    # recv_threading.my_stop()
-    # bus1.shutdown()
 
 finally:
     ka1.stop()

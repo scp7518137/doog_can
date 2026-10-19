@@ -63,7 +63,7 @@ class Motor:
             return self._node_id, decode_opentoangle(msg_data)
 
         raise IDError(
-        f"节点 {self._node_id} 收到非预期帧 ID:0x{msg_id:X}"
+        f"node {self._node_id} recv error ID:0x{msg_id:X}"
         )
 
 ########################################################################
@@ -101,94 +101,94 @@ class Motor:
         report: OpenToAngle = decode_opentoangle(msg_data)
         return msg_id, report
     
-    def set_speed(self, value: float) -> None:
-        """Send a speed command.
+    # def set_speed(self, value: float) -> None:
+    #     """Send a speed command.
 
-        Args:
-            value: Value sent with the command rad/s.
-        """
-        self._msg_send(CmdList.SPEED, value)
+    #     Args:
+    #         value: Value sent with the command rad/s.
+    #     """
+    #     self._msg_send(CmdList.SPEED, value)
 
-    def set_voltage(self, value: float) -> None:
-        """Send a voltage command.
+    # def set_voltage(self, value: float) -> None:
+    #     """Send a voltage command.
 
-        Args:
-            value: Value sent with the command V.
-        """
-        self._msg_send(CmdList.VOLTAGE, value)
+    #     Args:
+    #         value: Value sent with the command V.
+    #     """
+    #     self._msg_send(CmdList.VOLTAGE, value)
 
-    def set_mode(self, value: float) -> None:
-        """Send a mode command.
+    # def set_mode(self, value: float) -> None:
+    #     """Send a mode command.
 
-        Args:
-            0	IDLE	                No output.
-            1	open-loop	            Open-loop voltage/speed drive.
-            2	align	                Two-step rotor alignment.
-            3	closed-loop torque      With Iq directly commanded.
-            4   closed-loop speed	    Speed loop -> current loop.
-            5	closed-loop position	Position loop -> speed loop -> current loop.
+    #     Args:
+    #         0	IDLE	                No output.
+    #         1	open-loop	            Open-loop voltage/speed drive.
+    #         2	align	                Two-step rotor alignment.
+    #         3	closed-loop torque      With Iq directly commanded.
+    #         4   closed-loop speed	    Speed loop -> current loop.
+    #         5	closed-loop position	Position loop -> speed loop -> current loop.
 
-        """
-        self._msg_send(CmdList.MODE, value)
+    #     """
+    #     self._msg_send(CmdList.MODE, value)
 
-    def set_direction(self, value: float) -> None:
-        """Send a direction command.
+    # def set_direction(self, value: float) -> None:
+    #     """Send a direction command.
 
-        Args:
-            0  Forward rotation
-            1  Reverse rotation
-        """
-        self._msg_send(CmdList.DIRECTION, value)
+    #     Args:
+    #         0  Forward rotation
+    #         1  Reverse rotation
+    #     """
+    #     self._msg_send(CmdList.DIRECTION, value)
 
-    def set_torque(self, value: float) -> None:
-        """Send a torque command.
+    # def set_torque(self, value: float) -> None:
+    #     """Send a torque command.
 
-        Args:
-            value: Value sent with the command N * M.
-        """
-        self._msg_send(CmdList.TORQUE, value)
+    #     Args:
+    #         value: Value sent with the command N * M.
+    #     """
+    #     self._msg_send(CmdList.TORQUE, value)
 
-    def set_position(self, value: float) -> None:
-        """Send a position command.
+    # def set_position(self, value: float) -> None:
+    #     """Send a position command.
 
-        Args:
-            value: Value sent with the command.
-        """
-        self._msg_send(CmdList.POSITION, value)
+    #     Args:
+    #         value: Value sent with the command.
+    #     """
+    #     self._msg_send(CmdList.POSITION, value)
 
-    def open_to_angle(self, value: float) -> None:
-        """Send an open-to-angle command.
+    # def open_to_angle(self, value: float) -> None:
+    #     """Send an open-to-angle command.
 
-        Args:
-            value: Value sent with the command deg.
-        """
-        self._msg_send(CmdList.OPENTOANGLE, value)
+    #     Args:
+    #         value: Value sent with the command deg.
+    #     """
+    #     self._msg_send(CmdList.OPENTOANGLE, value)
     
-    def ask_status(self) -> tuple[int, StatusReport]:
-        """Request and return the motor status.
+    # def ask_status(self) -> tuple[int, StatusReport]:
+    #     """Request and return the motor status.
 
-        Returns:
-            A tuple containing the response frame ID and status report.
+    #     Returns:
+    #         A tuple containing the response frame ID and status report.
 
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
-        self._msg_send(CmdList.ASKSTATUS)
-        return self._msg_receive()
+    #     Raises:
+    #         TimeoutError: No response is received before the timeout.
+    #         IDError: The received frame ID does not match the expected ID.
+    #     """
+    #     self._msg_send(CmdList.ASKSTATUS)
+    #     return self._msg_receive()
 
-    def ask_open_to_angle(self) -> tuple[int, OpenToAngle]:
-        """Request and return the open-to-angle response.
+    # def ask_open_to_angle(self) -> tuple[int, OpenToAngle]:
+    #     """Request and return the open-to-angle response.
 
-        Returns:
-            A tuple containing the response frame ID and response data.
+    #     Returns:
+    #         A tuple containing the response frame ID and response data.
 
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
-        self._msg_send(CmdList.ASKOPENTOANGLE)
-        return self._msg_opentoangle_receive()
+    #     Raises:
+    #         TimeoutError: No response is received before the timeout.
+    #         IDError: The received frame ID does not match the expected ID.
+    #     """
+    #     self._msg_send(CmdList.ASKOPENTOANGLE)
+    #     return self._msg_opentoangle_receive()
 
     ######################################################
 

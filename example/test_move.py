@@ -49,7 +49,7 @@ try:
                 id, model = motor2.msg_recv(msg_recv)
         print(f"id is {id}, model is {model}")
 
-    send_threading.transmit_slot(motor1.open_to_angle_build(60))
+    send_threading.transmit_slot(motor1.open_to_angle_build(-30))
     send_threading.transmit_slot(motor2.open_to_angle_build(-30))
     time.sleep(3)
 
@@ -66,7 +66,7 @@ try:
                 id, model = motor2.msg_recv(msg_recv)
         print(f"id is {id}, model is {model}")
 
-    send_threading.transmit_slot(motor1.open_to_angle_build(90))
+    send_threading.transmit_slot(motor1.open_to_angle_build(30))
     send_threading.transmit_slot(motor2.open_to_angle_build(30))
     time.sleep(3)
 

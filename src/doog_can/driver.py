@@ -50,7 +50,6 @@ class Motor:
         """decode a motor status response.
         
         Raises:
-            TimeoutError: Noresponse is received before the timeout.
             IDError: The received frame ID does not match the expected ID.
         """
         msg_id = msg.arbitration_id

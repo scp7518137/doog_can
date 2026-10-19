@@ -3,7 +3,7 @@ import can
 import time
 from doog_can import StatusReport
 
-bus1 = dc.can_init("can1")
+bus1 = dc.can_init("can2")
 # 定义bus1
 
 motor1 = dc.Motor(bus=bus1, node_id=1)

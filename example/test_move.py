@@ -22,15 +22,19 @@ try:
     ka1.start()
     print("开启发送线程/接受线程/保活")
 
+    send_threading.transmit_slot(motor1.mode_build(1))
     send_threading.transmit_slot(motor2.mode_build(1))
+    print("model 1")
 
     send_threading.transmit_slot(motor1.open_to_angle_build(30))
     send_threading.transmit_slot(motor2.open_to_angle_build(30))
+    print("set degree")
 
     time.sleep(3)
 
     send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
+    print("ask open_degree_state")
 
 
     msg_recv = recv_threading.receive_slot()

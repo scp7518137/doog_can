@@ -187,7 +187,7 @@ class Motor:
         """
         self._msg_build(CmdList.VOLTAGE, value)
 
-    def mode_build(self, value: float) -> None:
+    def mode_build(self, value: float) -> can.Message:
         """Build a mode command.
 
         Args:
@@ -199,40 +199,40 @@ class Motor:
             5	closed-loop position	Position loop -> speed loop -> current loop.
 
         """
-        self._msg_build(CmdList.MODE, value)
+        return self._msg_build(CmdList.MODE, value)
     
-    def direction_build(self, value: float) -> None:
+    def direction_build(self, value: float) -> can.Message:
         """Build a direction command.
 
         Args:
             0  Forward rotation
             1  Reverse rotation
         """
-        self._msg_build(CmdList.DIRECTION, value)
+        return self._msg_build(CmdList.DIRECTION, value)
 
-    def torque_build(self, value: float) -> None:
+    def torque_build(self, value: float) -> can.Message:
         """Build a torque command.
 
         Args:
             value: Value sent with the command N * M.
         """
-        self._msg_build(CmdList.TORQUE, value)
+        return self._msg_build(CmdList.TORQUE, value)
 
-    def position_build(self, value: float) -> None:
+    def position_build(self, value: float) -> can.Message:
         """Build a position command.
 
         Args:
             value: Value sent with the command.
         """
-        self._msg_build(CmdList.POSITION, value)
+        return self._msg_build(CmdList.POSITION, value)
 
-    def open_to_angle_build(self, value: float) -> None:
+    def open_to_angle_build(self, value: float) -> can.Message:
         """Build an open-to-angle command.
 
         Args:
             value: Value sent with the command deg.
         """
-        self._msg_build(CmdList.OPENTOANGLE, value)
+        return self._msg_build(CmdList.OPENTOANGLE, value)
         
     def ask_status_build(self) -> tuple[int, StatusReport]:
         """Request and return the motor status.

@@ -27,11 +27,30 @@ try:
     send_threading.transmit_slot(motor1.open_to_angle_build(30))
     time.sleep(3)
 
+    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
+
+    msg_recv = recv_threading.receive_slot()
+    assert msg_recv is not None
+    id, model = motor1.msg_recv(msg_recv)
+    print(f"id is {id}, model is {model}")
+
     send_threading.transmit_slot(motor1.open_to_angle_build(60))
     time.sleep(3)
 
+    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
+    msg_recv = recv_threading.receive_slot()
+    assert msg_recv is not None
+    id, model = motor1.msg_recv(msg_recv)
+    print(f"id is {id}, model is {model}")
+
     send_threading.transmit_slot(motor1.open_to_angle_build(90))
     time.sleep(3)
+
+    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
+    msg_recv = recv_threading.receive_slot()
+    assert msg_recv is not None
+    id, model = motor1.msg_recv(msg_recv)
+    print(f"id is {id}, model is {model}")
 
     # for i in range(6):
     #     msg = motor1.mode_build(i)

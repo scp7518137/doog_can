@@ -250,13 +250,9 @@ class Motor:
         return self._msg_build(CmdList.OPENTOANGLE, value)
 
     def ask_status_build(self) -> can.Message:
-        """Request and return the motor status.
 
-        Returns:
-            A tuple containing the response frame ID and status report.
-
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
         return self._msg_build(CmdList.ASKSTATUS)
+
+    def ask_open_to_angle_build(self) -> can.Message:
+
+        return self._msg_build(CmdList.ASKOPENTOANGLE)

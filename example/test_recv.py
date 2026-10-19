@@ -13,7 +13,7 @@ send_threading = dc.Transmit_Threading(bus=bus1)
 recv_threading = dc.Receive_Threading(bus=bus1)
 print("初始化发送/接受线程")
 
-ka1 = dc.KeepAlive(start_number=1, stop_number=1, bus=bus1, send_threading=send_threading)
+ka1 = dc.KeepAlive(start_number=1, stop_number=2, bus=bus1, send_threading=send_threading)
 
 try:
     send_threading.my_start()

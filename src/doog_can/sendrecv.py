@@ -11,6 +11,8 @@ class Transmit_Threading(threading.Thread):
         super().__init__(name = "Transmit_Threading", daemon=True)
         self._bus: can.BusABC = bus
         self._messages: queue.Queue[can.Message | None] = queue.Queue(maxsize=MAXSIZE)
+        self._now = time.time()
+        self._older = time.time()
 
     def transmit_slot(self, msg:can.Message) -> None:
         self._messages.put(msg)
@@ -21,6 +23,9 @@ class Transmit_Threading(threading.Thread):
             if msg is None:
                 break
             self._bus.send(msg)
+            self._now = time.time()
+            time1 = self._now - self._older
+            print(f"距离上次发送经过了{time1}")
 
     def my_start(self) -> None:
         self.start()

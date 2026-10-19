@@ -16,6 +16,8 @@ print("初始化发送线程")
 try:
     send_threading.my_start()
     print("开启发送线程")
+    now = time.time
+    older = time.time
     for i in range(6):
         msg = motor1.mode_build(i)
         print("生成msg")

@@ -49,6 +49,11 @@ try:
     #     id, model = motor1.msg_recv(msg_recv)
     #     print(f"id is {id}, model is {model}")
 
+    # ka1.stop()
+    # send_threading.my_stop()
+    # recv_threading.my_stop()
+    # bus1.shutdown()
+
 finally:
     ka1.stop()
     send_threading.my_stop()

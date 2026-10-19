@@ -46,8 +46,11 @@ class Receive_Threading(threading.Thread):
     def run(self) -> None:
         while self.running_event.is_set():
             msg: can.Message | None = self._bus.recv(timeout=0.05)
-            if self._messages is not None:
-                self._messages.put(msg)
+            if msg is not None:
+                try:
+                    self._messages.put(msg)
+                except queue.Full:
+                    continue
 
     def my_start(self) -> None:
         self.running_event.set()
@@ -56,3 +59,4 @@ class Receive_Threading(threading.Thread):
     def my_stop(self) -> None:
         self.running_event.clear()
         self.join()
+        

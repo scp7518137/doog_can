@@ -3,10 +3,10 @@ import can
 import time
 from doog_can import StatusReport
 
-bus1 = dc.can_init("can2")
+bus1 = dc.can_init("can1")
 # 定义bus1
 
-motor1 = dc.Motor(bus=bus1, node_id=1)
+motor1 = dc.Motor(bus=bus1, node_id=2)
 print("定义电机1")
 
 send_threading = dc.Transmit_Threading(bus=bus1)

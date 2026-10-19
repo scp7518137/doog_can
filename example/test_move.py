@@ -25,27 +25,29 @@ try:
     send_threading.transmit_slot(motor1.mode_build(1))
     send_threading.transmit_slot(motor2.mode_build(1))
     print("model 1")
+    # 设置状态
 
     send_threading.transmit_slot(motor1.open_to_angle_build(30))
     send_threading.transmit_slot(motor2.open_to_angle_build(30))
     print("set degree")
+    # 编写开环角度命令并放入槽
 
     time.sleep(3)
 
     send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
     print("ask open_degree_state")
+    # 编写查询开环角度命令并放入槽
 
-
-    msg_recv = recv_threading.receive_slot()
-    assert msg_recv is not None
-    id, model = motor1.msg_recv(msg_recv)
-    print(f"id is {id}, model is {model}")
-
-    msg_recv = recv_threading.receive_slot()
-    assert msg_recv is not None
-    id, model = motor2.msg_recv(msg_recv)
-    print(f"id is {id}, model is {model}")
+    for _ in range(2):
+        msg_recv = recv_threading.receive_slot()
+        assert msg_recv is not None
+        match msg_recv.arbitration_id:
+            case 0x301:
+                id, model = motor1.msg_recv(msg_recv)
+            case 0x302:
+                id, model = motor2.msg_recv(msg_recv)
+        print(f"id is {id}, model is {model}")
 
     send_threading.transmit_slot(motor1.open_to_angle_build(60))
     send_threading.transmit_slot(motor2.open_to_angle_build(-30))
@@ -54,15 +56,15 @@ try:
     send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
 
-    msg_recv = recv_threading.receive_slot()
-    assert msg_recv is not None
-    id, model = motor1.msg_recv(msg_recv)
-    print(f"id is {id}, model is {model}")
-
-    msg_recv = recv_threading.receive_slot()
-    assert msg_recv is not None
-    id, model = motor2.msg_recv(msg_recv)
-    print(f"id is {id}, model is {model}")
+    for _ in range(2):
+        msg_recv = recv_threading.receive_slot()
+        assert msg_recv is not None
+        match msg_recv.arbitration_id:
+            case 0x301:
+                id, model = motor1.msg_recv(msg_recv)
+            case 0x302:
+                id, model = motor2.msg_recv(msg_recv)
+        print(f"id is {id}, model is {model}")
 
     send_threading.transmit_slot(motor1.open_to_angle_build(90))
     send_threading.transmit_slot(motor2.open_to_angle_build(30))
@@ -71,15 +73,15 @@ try:
     send_threading.transmit_slot(motor1.ask_open_to_angle_build())
     send_threading.transmit_slot(motor2.ask_open_to_angle_build())
 
-    msg_recv = recv_threading.receive_slot()
-    assert msg_recv is not None
-    id, model = motor1.msg_recv(msg_recv)
-    print(f"id is {id}, model is {model}")
-
-    msg_recv = recv_threading.receive_slot()
-    assert msg_recv is not None
-    id, model = motor2.msg_recv(msg_recv)
-    print(f"id is {id}, model is {model}")
+    for _ in range(2):
+        msg_recv = recv_threading.receive_slot()
+        assert msg_recv is not None
+        match msg_recv.arbitration_id:
+            case 0x301:
+                id, model = motor1.msg_recv(msg_recv)
+            case 0x302:
+                id, model = motor2.msg_recv(msg_recv)
+        print(f"id is {id}, model is {model}")
 
 
 

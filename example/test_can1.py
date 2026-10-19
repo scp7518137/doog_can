@@ -16,20 +16,19 @@ print("初始化发送线程")
 try:
     send_threading.my_start()
     print("开启发送线程")
+    for i in range(6):
+        msg = motor1.mode_build(i)
+        print("生成msg")
+        assert msg is not None
+        send_threading.transmit_slot(msg)
 
-    msg = motor1.mode_build(1)
-    print("生成msg")
-    assert msg is not None
-    send_threading.transmit_slot(msg)
-    print(f"已发送{msg}")
-
-    msg_recv = bus2.recv(timeout = 0.05)
-    if msg_recv is not None:
-        msg_recv_id = msg_recv.arbitration_id
-        msg_recv_data = bytes(msg_recv.data)
-        print(f"已接收 {msg_recv_id - 0x100} {msg_recv_data}")
-    else:
-        print("未接收")
+        msg_recv = bus2.recv(timeout = 0.05)
+        if msg_recv is not None:
+            msg_recv_id = msg_recv.arbitration_id
+            msg_recv_data = bytes(msg_recv.data)
+            print(f"已接收 {msg_recv_id - 0x100} {msg_recv_data}")
+        else:
+            print("未接收")
 
 finally:
     send_threading.my_stop()

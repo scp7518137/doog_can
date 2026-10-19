@@ -14,7 +14,7 @@ send_threading = dc.Transmit_Threading(bus=bus1)
 send_threading.my_start()
 # 开启发送线程
 msg = motor1.mode_build(1)
-# 生成msg
+print("生成msg")
 assert msg is not None
 send_threading.transmit_slot(msg)
 print(f"已发送{msg}")

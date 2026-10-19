@@ -2,8 +2,8 @@
 from .protocol import (
     build_frame, 
     decode_frame,
-    feedback_frame_id,
     decode_opentoangle,
+    feedback_frame_id,
     feedback_opentoangle_id,
     StatusReport,
     OpenToAngle,
@@ -46,7 +46,7 @@ class Motor:
         msg: can.Message = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
         return msg
 
-    def msg_recv(self, msg: can.Message) -> tuple[int, StatusReport]:
+    def msg_recv(self, msg: can.Message) -> tuple[int, StatusReport| OpenToAngle]:
         """decode a motor status response.
         
         Raises:
@@ -54,19 +54,17 @@ class Motor:
             IDError: The received frame ID does not match the expected ID.
         """
         msg_id = msg.arbitration_id
-        # if msg_id != self._feedback_frame_id:
-        #     raise IDError
         msg_data = bytes(msg.data)
-        report: StatusReport = decode_frame(msg_data)
+        
+        if msg_id == self._feedback_frame_id:
+            return self._node_id, decode_frame(msg_data)
 
-        if msg_id == 0x200 + self._node_id:
-            model = 0x200
-        elif msg_id == 0x300 + self._node_id:
-            model = 0x300
-        else:
-            print("IDError")
+        if msg_id == self._feedback_opentoangle_id:
+            return self._node_id, decode_opentoangle(msg_data)
 
-        return msg_id - model, report
+        raise IDError(
+        f"节点 {self._node_id} 收到非预期帧 ID:0x{msg_id:X}"
+        )
 
 ########################################################################
     def _msg_receive(self) -> tuple[int, StatusReport]:

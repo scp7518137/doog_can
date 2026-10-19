@@ -40,16 +40,6 @@ try:
         id, model = motor1.msg_recv(msg_recv)
         print(f"id is {id}, model is {model}")
 
-        # msg_recv = bus2.recv(timeout = 0.05)
-        # if msg_recv is not None:
-        #     msg_recv_id = msg_recv.arbitration_id
-        #     msg_recv_data = bytes(msg_recv.data)
-        #     now = time.time()
-        #     print(f"time: {older - now}\n已接收 {msg_recv_id - 0x100} {msg_recv_data}")
-        #     older = now
-        # else:
-        #     print("未接收")
-
 finally:
     ka1.stop()
     send_threading.my_stop()

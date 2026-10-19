@@ -9,10 +9,16 @@ bus2 = dc.can_init("can0")
 
 motor1 = dc.Motor(bus=bus1, node_id=1)
 # 定义电机1
+print("定义电机1")
+
 send_threading = dc.Transmit_Threading(bus=bus1)
 # 初始化发送线程
+print("初始化发送线程")
+
 send_threading.my_start()
 # 开启发送线程
+print("开启发送线程")
+
 msg = motor1.mode_build(1)
 print("生成msg")
 assert msg is not None

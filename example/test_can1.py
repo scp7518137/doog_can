@@ -27,8 +27,7 @@ try:
     if msg_recv is not None:
         msg_recv_id = msg_recv.arbitration_id
         msg_recv_data = bytes(msg_recv.data)
-        report: StatusReport = dc.decode_frame(msg_recv_data)
-        print(f"已接收 {msg_recv_id - 0x200} {report}")
+        print(f"已接收 {msg_recv_id - 0x100} {msg_recv_data}")
     else:
         print("未接收")
 

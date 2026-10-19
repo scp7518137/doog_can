@@ -19,6 +19,7 @@ try:
     send_threading.my_start()
     print("开启发送线程")
     ka1.start()
+    now, older = time.time(), time.time() 
 
     now = time.time()
     older = time.time()
@@ -32,7 +33,9 @@ try:
         if msg_recv is not None:
             msg_recv_id = msg_recv.arbitration_id
             msg_recv_data = bytes(msg_recv.data)
-            print(f"已接收 {msg_recv_id - 0x100} {msg_recv_data}")
+            now = time.time()
+            print(f"time: {older - now}\n已接收 {msg_recv_id - 0x100} {msg_recv_data}")
+            older = now
         else:
             print("未接收")
 

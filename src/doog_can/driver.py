@@ -36,8 +36,15 @@ class Motor:
     def _msg_send(self, cmd: int, value: float = 0):
         """Build and send a CAN message for the given command."""
         frame_id, data = build_frame(self._node_id, cmd, value)
-        msg = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
+        msg: can.Message = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
         self._bus.send(msg)
+
+
+    def _msg_build(self, cmd: int, value:float = 0) -> can.Message:
+        """Build a CAN message for the given command"""
+        frame_id, data = build_frame(self._node_id, cmd, value)
+        msg: can.Message = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
+        return msg
 
     def _msg_receive(self) -> tuple[int, StatusReport]:
         """Receive and decode a motor status response.
@@ -160,4 +167,95 @@ class Motor:
             IDError: The received frame ID does not match the expected ID.
         """
         self._msg_send(CmdList.ASKOPENTOANGLE)
+        return self._msg_opentoangle_receive()
+
+    ######################################################
+
+    def speed_build(self, value: float) -> None:
+        """Build a speed command.
+
+        Args:
+            value: Value sent with the command rad/s.
+        """
+        self._msg_build(CmdList.SPEED, value)
+    
+    def voltage_build(self, value: float) -> None:
+        """Build a voltage command.
+
+        Args:
+            value: Value sent with the command V.
+        """
+        self._msg_build(CmdList.VOLTAGE, value)
+
+    def mode_build(self, value: float) -> None:
+        """Build a mode command.
+
+        Args:
+            0	IDLE	                No output.
+            1	open-loop	            Open-loop voltage/speed drive.
+            2	align	                Two-step rotor alignment.
+            3	closed-loop torque      With Iq directly commanded.
+            4   closed-loop speed	    Speed loop -> current loop.
+            5	closed-loop position	Position loop -> speed loop -> current loop.
+
+        """
+        self._msg_build(CmdList.MODE, value)
+    
+    def direction_build(self, value: float) -> None:
+        """Build a direction command.
+
+        Args:
+            0  Forward rotation
+            1  Reverse rotation
+        """
+        self._msg_build(CmdList.DIRECTION, value)
+
+    def torque_build(self, value: float) -> None:
+        """Build a torque command.
+
+        Args:
+            value: Value sent with the command N * M.
+        """
+        self._msg_build(CmdList.TORQUE, value)
+
+    def position_build(self, value: float) -> None:
+        """Build a position command.
+
+        Args:
+            value: Value sent with the command.
+        """
+        self._msg_build(CmdList.POSITION, value)
+
+    def open_to_angle_build(self, value: float) -> None:
+        """Build an open-to-angle command.
+
+        Args:
+            value: Value sent with the command deg.
+        """
+        self._msg_build(CmdList.OPENTOANGLE, value)
+        
+    def ask_status_build(self) -> tuple[int, StatusReport]:
+        """Request and return the motor status.
+
+        Returns:
+            A tuple containing the response frame ID and status report.
+
+        Raises:
+            TimeoutError: No response is received before the timeout.
+            IDError: The received frame ID does not match the expected ID.
+        """
+        self._msg_build(CmdList.ASKSTATUS)
+        return self._msg_receive()
+    
+    def ask_open_to_angle_build(self) -> tuple[int, OpenToAngle]:
+        """Request and return the open-to-angle response.
+
+        Returns:
+            A tuple containing the response frame ID and response data.
+
+        Raises:
+            TimeoutError: No response is received before the timeout.
+            IDError: The received frame ID does not match the expected ID.
+        """
+        self._msg_build(CmdList.ASKOPENTOANGLE)
         return self._msg_opentoangle_receive()

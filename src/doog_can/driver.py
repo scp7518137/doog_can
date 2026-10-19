@@ -39,13 +39,28 @@ class Motor:
         msg: can.Message = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
         self._bus.send(msg)
 
-
+#######################################################################
     def _msg_build(self, cmd: int, value:float = 0) -> can.Message:
         """Build a CAN message for the given command"""
         frame_id, data = build_frame(self._node_id, cmd, value)
         msg: can.Message = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
         return msg
 
+    def msg_recv(self, msg: can.Message) -> tuple[int, StatusReport]:
+        """decode a motor status response.
+        
+        Raises:
+            TimeoutError: Noresponse is received before the timeout.
+            IDError: The received frame ID does not match the expected ID.
+        """
+        msg_id = msg.arbitration_id
+        if msg_id != self._feedback_frame_id:
+            raise IDError
+        msg_data = bytes(msg.data)
+        report: StatusReport = decode_frame(msg_data)
+        return msg_id - 0x200, report
+
+########################################################################
     def _msg_receive(self) -> tuple[int, StatusReport]:
         """Receive and decode a motor status response.
 
@@ -233,8 +248,8 @@ class Motor:
             value: Value sent with the command deg.
         """
         return self._msg_build(CmdList.OPENTOANGLE, value)
-        
-    def ask_status_build(self) -> tuple[int, StatusReport]:
+
+    def ask_status_build(self) -> can.Message:
         """Request and return the motor status.
 
         Returns:
@@ -244,18 +259,4 @@ class Motor:
             TimeoutError: No response is received before the timeout.
             IDError: The received frame ID does not match the expected ID.
         """
-        self._msg_build(CmdList.ASKSTATUS)
-        return self._msg_receive()
-    
-    def ask_open_to_angle_build(self) -> tuple[int, OpenToAngle]:
-        """Request and return the open-to-angle response.
-
-        Returns:
-            A tuple containing the response frame ID and response data.
-
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
-        self._msg_build(CmdList.ASKOPENTOANGLE)
-        return self._msg_opentoangle_receive()
+        return self._msg_build(CmdList.ASKSTATUS)

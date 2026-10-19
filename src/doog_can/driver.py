@@ -54,11 +54,19 @@ class Motor:
             IDError: The received frame ID does not match the expected ID.
         """
         msg_id = msg.arbitration_id
-        if msg_id != self._feedback_frame_id:
-            raise IDError
+        # if msg_id != self._feedback_frame_id:
+        #     raise IDError
         msg_data = bytes(msg.data)
         report: StatusReport = decode_frame(msg_data)
-        return msg_id - 0x200, report
+
+        if msg_id == 0x200 + self._node_id:
+            model = 0x200
+        elif msg_id == 0x300 + self._node_id:
+            model = 0x300
+        else:
+            print("IDError")
+
+        return msg_id - model, report
 
 ########################################################################
     def _msg_receive(self) -> tuple[int, StatusReport]:

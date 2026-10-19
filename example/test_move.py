@@ -20,8 +20,7 @@ try:
     recv_threading.my_start()
     ka1.start()
     print("开启发送线程/接受线程/保活")
-    now, older = time.time(), time.time() 
-
+    
     send_threading.transmit_slot(motor2.mode_build(1))
 
     send_threading.transmit_slot(motor2.open_to_angle_build(30))

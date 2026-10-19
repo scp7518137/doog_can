@@ -15,24 +15,29 @@ send_threading = dc.Transmit_Threading(bus=bus1)
 # 初始化发送线程
 print("初始化发送线程")
 
-send_threading.my_start()
-# 开启发送线程
-print("开启发送线程")
+try:
+    send_threading.my_start()
+    # 开启发送线程
+    print("开启发送线程")
 
-msg = motor1.mode_build(1)
-print("生成msg")
-assert msg is not None
-send_threading.transmit_slot(msg)
-print(f"已发送{msg}")
-# 填充
+    msg = motor1.mode_build(1)
+    print("生成msg")
+    assert msg is not None
+    send_threading.transmit_slot(msg)
+    print(f"已发送{msg}")
+    # 填充
 
-msg_recv = bus2.recv(timeout = 0.05)
-assert msg_recv is not None
-msg_recv_id = msg_recv.arbitration_id
-msg_recv_data = bytes(msg_recv.data)
-report: StatusReport = dc.decode_frame(msg_recv_data)
-print(f"已接收 {msg_recv_id - 0x200} {report}")
+    msg_recv = bus2.recv(timeout = 0.05)
+    if msg_recv is not None:
+        msg_recv_id = msg_recv.arbitration_id
+        msg_recv_data = bytes(msg_recv.data)
+        report: StatusReport = dc.decode_frame(msg_recv_data)
+        print(f"已接收 {msg_recv_id - 0x200} {report}")
+    else:
+        print("未接收")
 
-time.sleep(0.5)
-send_threading.my_stop()
+finally:
+    send_threading.my_stop()
+    bus1.shutdown()
+    bus2.shutdown()
 

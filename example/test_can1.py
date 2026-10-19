@@ -19,11 +19,15 @@ try:
     send_threading.my_start()
     # 开启发送线程
     print("开启发送线程")
+    send_threading.run()
+    print(" running")
+
 
     msg = motor1.mode_build(1)
     print("生成msg")
     assert msg is not None
     send_threading.transmit_slot(msg)
+    send_threading.run()
     print(f"已发送{msg}")
     # 填充
 

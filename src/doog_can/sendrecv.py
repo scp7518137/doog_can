@@ -15,7 +15,7 @@ class Transmit_Threading(threading.Thread):
     def transmit_slot(self, msg:can.Message) -> None:
         self._messages.put(msg)
         
-    def _run(self) -> None:
+    def run(self) -> None:
         while True:
             msg: can.Message | None = self._messages.get()
             if msg is None:
@@ -24,7 +24,7 @@ class Transmit_Threading(threading.Thread):
 
     def my_start(self) -> None:
         self.start()
-        self._run()
+
 
     def my_stop(self) -> None:
         self._messages.put(None)

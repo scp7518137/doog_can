@@ -8,28 +8,20 @@ bus2 = dc.can_init("can0")
 # 定义bus1, bus1
 
 motor1 = dc.Motor(bus=bus1, node_id=1)
-# 定义电机1
 print("定义电机1")
 
 send_threading = dc.Transmit_Threading(bus=bus1)
-# 初始化发送线程
 print("初始化发送线程")
 
 try:
     send_threading.my_start()
-    # 开启发送线程
     print("开启发送线程")
-    send_threading.run()
-    print(" running")
-
 
     msg = motor1.mode_build(1)
     print("生成msg")
     assert msg is not None
     send_threading.transmit_slot(msg)
-    send_threading.run()
     print(f"已发送{msg}")
-    # 填充
 
     msg_recv = bus2.recv(timeout = 0.05)
     if msg_recv is not None:

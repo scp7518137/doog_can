@@ -25,6 +25,7 @@ from .constants import (
     SystemStatus,
     CmdList,
     OpenToAngleMode,
+    AutoTage,
 )
 from dataclasses import dataclass
 
@@ -60,7 +61,7 @@ class OpenToAngle:
     remainangle: float
     settingvoltage: float
     busvoltage: float
-    remain: int
+    autotage: int
 
 
 def _check_node_id(node_id: int) -> None:
@@ -241,7 +242,7 @@ def decode_opentoangle(msgdata: bytes) -> OpenToAngle:
         remainangle=int.from_bytes(msgdata[1:3], "little", signed=True) / SCALE_REMAINANGLE,
         settingvoltage=int.from_bytes(msgdata[3:5], "little", signed=True) / SCALE_SETTINGVOLTAGE,
         busvoltage=int.from_bytes(msgdata[5:7], "little", signed=True) / SCALE_BUS_VOLTAGE,
-        remain=msgdata[7]
+        autotage=AutoTage(msgdata[7]),
     )
 
 

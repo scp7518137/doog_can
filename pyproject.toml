@@ -5,7 +5,7 @@ license = "MIT"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "scp7518137", email = "15754910+scp157130@user.noreply.gitee.com" }
+    { name = "scp7518137", email = "276445563@qq.com" }
 ]
 requires-python = ">=3.13"
 dependencies = [

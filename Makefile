@@ -33,7 +33,7 @@ usb_check_MAC:
 usb_set_MAC:
 		@sudo ip link set $(MAC) up
 		@sudo ip addr add 10.55.0.1/24 dev $(MAC)
-		@ping -c 10 10.55.0.2
+		@ping -c 5 10.55.0.2
 		@echo "=====computer set MAC====="
 
 usb_board_set:

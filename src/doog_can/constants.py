@@ -124,3 +124,11 @@ class OpenToAngleMode(IntEnum):
     INITSTATE = 0
     RUNNING = 1
     STOPPED = 2
+
+class AutoTage(IntEnum):
+    """
+    0   ask answer
+    1   auto answer
+    """
+    ASKANSWER = 0
+    AUTOANSWER = 1

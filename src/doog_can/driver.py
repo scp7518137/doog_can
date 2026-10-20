@@ -2,8 +2,8 @@
 from .protocol import (
     build_frame, 
     decode_frame,
-    feedback_frame_id,
     decode_opentoangle,
+    feedback_frame_id,
     feedback_opentoangle_id,
     StatusReport,
     OpenToAngle,
@@ -33,64 +33,54 @@ class Motor:
         self._feedback_frame_id = feedback_frame_id(node_id)
         self._feedback_opentoangle_id = feedback_opentoangle_id(node_id)
 
-    def _msg_send(self, cmd: int, value: float = 0):
-        """Build and send a CAN message for the given command."""
+
+    def _msg_build(self, cmd: int, value:float = 0) -> can.Message:
+        """Build a CAN message for the given command"""
         frame_id, data = build_frame(self._node_id, cmd, value)
-        msg = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
-        self._bus.send(msg)
+        msg: can.Message = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
+        return msg
 
-    def _msg_receive(self) -> tuple[int, StatusReport]:
-        """Receive and decode a motor status response.
-
+        
+    def msg_recv(self, msg: can.Message) -> tuple[int, StatusReport| OpenToAngle]:
+        """decode a motor status response.
+        
         Raises:
-            TimeoutError: Noresponse is received before the timeout.
             IDError: The received frame ID does not match the expected ID.
         """
-        msg = self._bus.recv(timeout = 1.0)
-        if msg is None:
-            raise TimeoutError("Timeout")
         msg_id = msg.arbitration_id
-        if msg_id != self._feedback_frame_id:
-            raise IDError
         msg_data = bytes(msg.data)
-        report: StatusReport = decode_frame(msg_data)
-        return msg_id - 0x200, report
+        
+        if msg_id == self._feedback_frame_id:
+            return self._node_id, decode_frame(msg_data)
 
-    def _msg_opentoangle_receive(self) -> tuple[int, OpenToAngle]:
-        """Receive and decode an open-to-angle response.
+        if msg_id == self._feedback_opentoangle_id:
+            return self._node_id, decode_opentoangle(msg_data)
 
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
-        msg = self._bus.recv(timeout = 1.0)
-        if msg is None:
-            raise TimeoutError("Timeout")
-        msg_id = msg.arbitration_id
-        if msg_id != self._feedback_opentoangle_id:
-            raise IDError
-        msg_data = bytes(msg.data)
-        report: OpenToAngle = decode_opentoangle(msg_data)
-        return msg_id, report
-    
-    def set_speed(self, value: float) -> None:
-        """Send a speed command.
+        raise IDError(
+        f"node {self._node_id} recv error ID:0x{msg_id:X}"
+        )
+
+
+    def build_speed_cmd(self, value: float) -> None:
+        """Build a speed command.
 
         Args:
             value: Value sent with the command rad/s.
         """
-        self._msg_send(CmdList.SPEED, value)
+        self._msg_build(CmdList.SPEED, value)
 
-    def set_voltage(self, value: float) -> None:
-        """Send a voltage command.
+    
+    def build_voltage_cmd(self, value: float) -> None:
+        """Build a voltage command.
 
         Args:
             value: Value sent with the command V.
         """
-        self._msg_send(CmdList.VOLTAGE, value)
+        self._msg_build(CmdList.VOLTAGE, value)
 
-    def set_mode(self, value: float) -> None:
-        """Send a mode command.
+
+    def build_mode_cmd(self, value: float) -> can.Message:
+        """Build a mode command.
 
         Args:
             0	IDLE	                No output.
@@ -101,63 +91,52 @@ class Motor:
             5	closed-loop position	Position loop -> speed loop -> current loop.
 
         """
-        self._msg_send(CmdList.MODE, value)
+        return self._msg_build(CmdList.MODE, value)
 
-    def set_direction(self, value: float) -> None:
-        """Send a direction command.
+    
+    def build_direction_cmd(self, value: float) -> can.Message:
+        """Build a direction command.
 
         Args:
             0  Forward rotation
             1  Reverse rotation
         """
-        self._msg_send(CmdList.DIRECTION, value)
+        return self._msg_build(CmdList.DIRECTION, value)
 
-    def set_torque(self, value: float) -> None:
-        """Send a torque command.
+
+    def build_torque_cmd(self, value: float) -> can.Message:
+        """Build a torque command.
 
         Args:
             value: Value sent with the command N * M.
         """
-        self._msg_send(CmdList.TORQUE, value)
+        return self._msg_build(CmdList.TORQUE, value)
 
-    def set_position(self, value: float) -> None:
-        """Send a position command.
+
+    def build_position_cmd(self, value: float) -> can.Message:
+        """Build a position command.
 
         Args:
             value: Value sent with the command.
         """
-        self._msg_send(CmdList.POSITION, value)
+        return self._msg_build(CmdList.POSITION, value)
 
-    def open_to_angle(self, value: float) -> None:
-        """Send an open-to-angle command.
+
+    def build_open_to_angle_cmd(self, value: float) -> can.Message:
+        """Build an open-to-angle command.
 
         Args:
             value: Value sent with the command deg.
         """
-        self._msg_send(CmdList.OPENTOANGLE, value)
-    
-    def ask_status(self) -> tuple[int, StatusReport]:
-        """Request and return the motor status.
+        return self._msg_build(CmdList.OPENTOANGLE, value)
 
-        Returns:
-            A tuple containing the response frame ID and status report.
 
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
-        self._msg_send(CmdList.ASKSTATUS)
-        return self._msg_receive()
+    def build_ask_status_cmd(self) -> can.Message:
+        """Build an ask status command."""
 
-    def ask_open_to_angle(self) -> tuple[int, OpenToAngle]:
-        """Request and return the open-to-angle response.
+        return self._msg_build(CmdList.ASKSTATUS)
 
-        Returns:
-            A tuple containing the response frame ID and response data.
 
-        Raises:
-            TimeoutError: No response is received before the timeout.
-            IDError: The received frame ID does not match the expected ID.
-        """
-        self._msg_send(CmdList.ASKOPENTOANGLE)
-        return self._msg_opentoangle_receive()
+    def build_ask_open_to_angle_cmd(self) -> can.Message:
+        """Build an ask open_to_angle command."""
+        return self._msg_build(CmdList.ASKOPENTOANGLE)

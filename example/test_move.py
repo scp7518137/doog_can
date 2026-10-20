@@ -16,75 +16,60 @@ print("初始化发送/接受线程")
 
 ka1 = dc.KeepAlive(start_number=1, stop_number=2, bus=bus1, send_threading=send_threading)
 
-try:
+def start() -> None:
     send_threading.my_start()
     recv_threading.my_start()
     ka1.start()
-    print("开启发送线程/接受线程/保活")
 
-    send_threading.transmit_slot(motor1.mode_build(1))
-    send_threading.transmit_slot(motor2.mode_build(1))
-    print("model 1")
-    # 设置状态
+def set_model(model1: int, model2: int) -> None:
+    send_threading.transmit_slot(motor1.build_mode_cmd(model1))
+    send_threading.transmit_slot(motor2.build_mode_cmd(model2))
 
-    send_threading.transmit_slot(motor1.open_to_angle_build(30))
-    send_threading.transmit_slot(motor2.open_to_angle_build(30))
+def set_angle(angle1: float, angle2: float) -> None:
+    send_threading.transmit_slot(motor1.build_open_to_angle_cmd(angle1))
+    send_threading.transmit_slot(motor2.build_open_to_angle_cmd(angle2))
     print("set degree")
-    # 编写开环角度命令并放入槽
 
-    time.sleep(3)
+def ask_state() -> None:
+    send_threading.transmit_slot(motor1.build_ask_open_to_angle_cmd())
+    send_threading.transmit_slot(motor2.build_ask_open_to_angle_cmd())
 
-    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
-    send_threading.transmit_slot(motor2.ask_open_to_angle_build())
-    print("ask open_degree_state")
-    # 编写查询开环角度命令并放入槽
+def read_angle() -> tuple[can.Message | None, can.Message | None]:
+    print("waiting angle.........")
+    motor1_msg: can.Message | None = recv_threading.receive_slot(1)
+    motor2_msg: can.Message | None = recv_threading.receive_slot(2)
+    return motor1_msg, motor2_msg
 
-    for _ in range(2):
-        msg_recv = recv_threading.receive_slot()
-        assert msg_recv is not None
-        match msg_recv.arbitration_id:
-            case 0x301:
-                id, model = motor1.msg_recv(msg_recv)
-            case 0x302:
-                id, model = motor2.msg_recv(msg_recv)
-        print(f"id is {id}, model is {model}")
+def print_angle(msg: can.Message) -> None:
+    node_id = msg.arbitration_id - 0x300
+    data = msg.data
+    print(f"ID: {node_id}\n MSG: {data}")
 
-    send_threading.transmit_slot(motor1.open_to_angle_build(-30))
-    send_threading.transmit_slot(motor2.open_to_angle_build(-30))
-    time.sleep(3)
+try:
+    start()
 
-    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
-    send_threading.transmit_slot(motor2.ask_open_to_angle_build())
+    set_model(1, 1)
 
-    for _ in range(2):
-        msg_recv = recv_threading.receive_slot()
-        assert msg_recv is not None
-        match msg_recv.arbitration_id:
-            case 0x301:
-                id, model = motor1.msg_recv(msg_recv)
-            case 0x302:
-                id, model = motor2.msg_recv(msg_recv)
-        print(f"id is {id}, model is {model}")
-
-    send_threading.transmit_slot(motor1.open_to_angle_build(30))
-    send_threading.transmit_slot(motor2.open_to_angle_build(30))
-    time.sleep(3)
-
-    send_threading.transmit_slot(motor1.ask_open_to_angle_build())
-    send_threading.transmit_slot(motor2.ask_open_to_angle_build())
-
-    for _ in range(2):
-        msg_recv = recv_threading.receive_slot()
-        assert msg_recv is not None
-        match msg_recv.arbitration_id:
-            case 0x301:
-                id, model = motor1.msg_recv(msg_recv)
-            case 0x302:
-                id, model = motor2.msg_recv(msg_recv)
-        print(f"id is {id}, model is {model}")
+    set_angle(30, 30)
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    
+    set_angle(-30, -30)
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
 
 
 
+    set_angle(30, 30)
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    
 finally:
     ka1.stop()
     send_threading.my_stop()

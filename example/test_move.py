@@ -42,8 +42,9 @@ def read_angle() -> tuple[can.Message | None, can.Message | None]:
 
 def print_angle(msg: can.Message) -> None:
     node_id = msg.arbitration_id - 0x300
-    data = msg.data
-    print(f"ID: {node_id}\n MSG: {data}")
+    data: bytes = bytes(msg.data)
+    code = dc.decode_opentoangle(data)
+    print(f"ID: {node_id}\nstatus: {code.status}, angle: {code.remainangle}, settingvoltage: {code.settingvoltage}, busvoltage: {code.busvoltage}, autotage: {code.autotage}")
 
 try:
     start()

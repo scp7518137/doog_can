@@ -11,7 +11,7 @@ from .constants import (
     SystemStatus,
 )
 from .driver import IDError, Motor
-from .protocol import OpenToAngle, StatusReport, feedback_frame_id, cmd_frame_id, decode_frame
+from .protocol import OpenToAngle, StatusReport, feedback_frame_id, cmd_frame_id, decode_frame, decode_opentoangle
 from .keep_alive import KeepAlive
 from .transport import can_init, vbus_init, vbus_close
 from .sendrecv import Transmit_Threading, Receive_Threading
@@ -35,4 +35,5 @@ __all__ = [
     "Transmit_Threading",
     "Receive_Threading",
     "decode_frame",
+    "decode_opentoangle",
 ]

@@ -55,8 +55,9 @@ try:
 
     set_model(1, 1)
 
-    set_direction(0, 0)
-    print(f"设置方向为前")
+    set_model(2, 2)
+    print("设置为对齐模式")
+    time.sleep(1)
 
     set_angle(30, 30)
     motor1_degree, motor2_degree = read_angle()

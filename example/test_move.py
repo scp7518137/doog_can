@@ -30,6 +30,10 @@ def set_angle(angle1: float, angle2: float) -> None:
     send_threading.transmit_slot(motor2.build_open_to_angle_cmd(angle2))
     print("set degree")
 
+def set_direction(d1: int, d2: int) -> None:
+    send_threading.transmit_slot(motor1.build_direction_cmd(d1))
+    send_threading.transmit_slot(motor2.build_direction_cmd(d2))
+
 def ask_state() -> None:
     send_threading.transmit_slot(motor1.build_ask_open_to_angle_cmd())
     send_threading.transmit_slot(motor2.build_ask_open_to_angle_cmd())
@@ -50,6 +54,9 @@ try:
     start()
 
     set_model(1, 1)
+
+    set_direction(0, 0)
+    print(f"设置方向为前")
 
     set_angle(30, 30)
     motor1_degree, motor2_degree = read_angle()

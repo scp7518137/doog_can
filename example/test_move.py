@@ -48,7 +48,7 @@ def print_angle(msg: can.Message) -> None:
     node_id = msg.arbitration_id - 0x300
     data: bytes = bytes(msg.data)
     code = dc.decode_opentoangle(data)
-    print(f"ID: {node_id}\nstatus: {code.status}, angle: {code.remainangle}, settingvoltage: {code.settingvoltage}, relhovdev: {code.relhovdev}, autotage: {code.autotage}")
+    print(f"ID: {node_id}\nstatus: {code.status}, angle: {code.moveangle}, settingvoltage: {code.settingvoltage}, relhovdev: {code.relhovdev}, autotage: {code.autotage}")
 
 try:
     start()

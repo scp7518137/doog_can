@@ -52,12 +52,11 @@ def print_angle(msg: can.Message) -> None:
 
 try:
     start()
-
-    set_model(1, 1)
-
     set_model(2, 2)
     print("设置为对齐模式")
     time.sleep(1)
+
+    set_model(1, 1)
 
     set_angle(30, 30)
     motor1_degree, motor2_degree = read_angle()

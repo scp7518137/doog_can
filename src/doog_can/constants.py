@@ -31,6 +31,7 @@ SCALE_OPENTOANGLE: int = 10
 
 SCALE_REMAINANGLE: int = 10
 SCALE_SETTINGVOLTAGE: int = 100
+SCALE_RELHOVDEV = 100
 
 class CmdList(IntEnum):
     """Command identifiers sent from the host to a motor node.
@@ -120,10 +121,12 @@ class OpenToAngleMode(IntEnum):
     0  inactive
     1  moving
     2  finished
+    3  repull
     """
     INITSTATE = 0
     RUNNING = 1
     STOPPED = 2
+    REPULL = 3
 
 class AutoTage(IntEnum):
     """

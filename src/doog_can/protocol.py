@@ -19,6 +19,7 @@ from .constants import (
     SCALE_OPENTOANGLE,
     SCALE_REMAINANGLE,
     SCALE_SETTINGVOLTAGE,
+    SCALE_RELHOVDEV,
     CommandMode,
     Direction,
     FeedbackMode,
@@ -53,14 +54,14 @@ class OpenToAngle:
     Attributes:
         status: Current state of the open-to-angle operation.
         remainangle: Remaining angle to travel in scaled physical units.
+        relhovdev: Relative hover deviation degree.
         settingvoltage: Configured voltage for the movement in scaled units.
-        busvoltage: Measured bus voltage in scaled physical units.
         remain: Remaining step count as a raw integer.
     """
     status: OpenToAngleMode
     remainangle: float
+    relhovdev: float
     settingvoltage: float
-    busvoltage: float
     autotage: int
 
 
@@ -238,10 +239,15 @@ def decode_opentoangle(msgdata: bytes) -> OpenToAngle:
     if len(msgdata) != CAN_DATA_LEN:
         raise ValueError(f"msgdata should {CAN_DATA_LEN} bytes, but {len(msgdata)} bytes")
     return OpenToAngle(
+        # status=OpenToAngleMode(msgdata[0]),
+        # remainangle=int.from_bytes(msgdata[1:3], "little", signed=True) / SCALE_REMAINANGLE,
+        # settingvoltage=int.from_bytes(msgdata[3:5], "little", signed=True) / SCALE_SETTINGVOLTAGE,
+        # busvoltage=int.from_bytes(msgdata[5:7], "little", signed=True) / SCALE_BUS_VOLTAGE,
+        # autotage=AutoTage(msgdata[7]),
         status=OpenToAngleMode(msgdata[0]),
         remainangle=int.from_bytes(msgdata[1:3], "little", signed=True) / SCALE_REMAINANGLE,
-        settingvoltage=int.from_bytes(msgdata[3:5], "little", signed=True) / SCALE_SETTINGVOLTAGE,
-        busvoltage=int.from_bytes(msgdata[5:7], "little", signed=True) / SCALE_BUS_VOLTAGE,
+        relhovdev = int.from_bytes(msgdata[3:5], "little", signed=True) / SCALE_RELHOVDEV,
+        settingvoltage=int.from_bytes(msgdata[5:7], "little", signed=True) / SCALE_SETTINGVOLTAGE,
         autotage=AutoTage(msgdata[7]),
     )
 

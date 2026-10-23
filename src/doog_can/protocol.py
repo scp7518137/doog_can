@@ -20,6 +20,10 @@ from .constants import (
     SCALE_MOVEANGLE,
     SCALE_SETTINGVOLTAGE,
     SCALE_RELHOVDEV,
+    MotorFaultCode_ff,
+    MotorFaultCode_ss,
+    MotorFaultCode_z,
+    MotorFaultCode_f,
     CommandMode,
     Direction,
     FeedbackMode,
@@ -29,6 +33,17 @@ from .constants import (
     AutoTage,
 )
 from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class FaultrCode:
+    """
+    """
+    fault_code: MotorFaultCode_z
+    state: MotorFaultCode_f
+    number: int
+    STATUS1: MotorFaultCode_ff
+    STATUS2: MotorFaultCode_ss
+
 
 @dataclass(frozen=True)
 class StatusReport:
@@ -245,6 +260,19 @@ def decode_opentoangle(msgdata: bytes) -> OpenToAngle:
         relhovdev = int.from_bytes(msgdata[3:5], "little", signed=True) / SCALE_RELHOVDEV,
         settingvoltage=int.from_bytes(msgdata[5:7], "little", signed=True) / SCALE_SETTINGVOLTAGE,
         autotage=AutoTage(msgdata[7]),
+    )
+
+def decode_faultcode(msgdata: bytes) -> FaultrCode:
+    """
+    """
+    if len(msgdata) != CAN_DATA_LEN:
+        raise ValueError(f"msgdata should {CAN_DATA_LEN} bytes, but {len(msgdata)} bytes")
+    return FaultrCode(
+        fault_code=MotorFaultCode_z(msgdata[0]),
+        state=MotorFaultCode_f(msgdata[1]),
+        number = int.from_bytes(msgdata[2:4], "little", signed=True),
+        STATUS1=MotorFaultCode_ff(msgdata[4:6]),
+        STATUS2=MotorFaultCode_ss(msgdata[6:7]),
     )
 
 

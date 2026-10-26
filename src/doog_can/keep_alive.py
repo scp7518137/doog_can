@@ -66,7 +66,7 @@ class KeepAlive():
                     next_time += self._period
                     delay = next_time - time.perf_counter()
                     if delay > 0:
-                        time.sleep(self._period)
+                        time.sleep(delay)
                     else:
                         next_time = time.perf_counter()
 

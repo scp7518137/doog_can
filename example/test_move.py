@@ -8,34 +8,41 @@ class MortorError(Exception):
     pass
 
 def start() -> None:
+    # 开启
     send_threading.my_start()
     recv_threading.my_start()
     ka1.start()
 
 def set_model(model1: int, model2: int) -> None:
+    # 设置模式
     send_threading.transmit_slot(motor1.build_mode_cmd(model1))
     send_threading.transmit_slot(motor2.build_mode_cmd(model2))
 
 def set_angle(angle1: float, angle2: float) -> None:
+    # 设置角度(开环)
     send_threading.transmit_slot(motor1.build_open_to_angle_cmd(angle1))
     send_threading.transmit_slot(motor2.build_open_to_angle_cmd(angle2))
     print("set angle")
 
 def set_direction(d1: int, d2: int) -> None:
+    # 设置方向
     send_threading.transmit_slot(motor1.build_direction_cmd(d1))
     send_threading.transmit_slot(motor2.build_direction_cmd(d2))
 
 def ask_state() -> None:
+    # 状态请求命令发送
     send_threading.transmit_slot(motor1.build_ask_status_cmd())
     send_threading.transmit_slot(motor2.build_ask_status_cmd())
 
 def read_angle() -> tuple[can.Message | None, can.Message | None]:
+    # 接受线程返回值
     print("waiting angle.........")
     motor1_msg: can.Message | None = recv_threading.receive_nomal_slot(1)
     motor2_msg: can.Message | None = recv_threading.receive_nomal_slot(2)
     return motor1_msg, motor2_msg
 
 def check_default() -> None:
+    # 检查报错
     print("Checking fault frame......")
     while True:
         msg: can.Message | None = recv_threading.reveive_fault_slot()
@@ -49,12 +56,14 @@ def check_default() -> None:
 
 
 def print_angle1(msg: can.Message) -> None:
+    # 打印角度解码 0x30
     node_id = msg.arbitration_id - 0x300
     data: bytes = bytes(msg.data)
     code = dc.decode_opentoangle(data)
     print(f"ID: {node_id}\nstatus: {code.status}, angle: {code.moveangle}, settingvoltage: {code.settingvoltage}, relhovdev: {code.relhovdev}, autotage: {code.autotage}")
 
 def print_angle2(msg: can.Message) -> None:
+    # 打印角度解码 0x20
     node_id = msg.arbitration_id - 0x200
     data: bytes = bytes(msg.data)
     code = dc.decode_frame(data)

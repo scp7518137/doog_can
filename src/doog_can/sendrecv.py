@@ -78,6 +78,7 @@ class Receive_Threading(threading.Thread):
             node_id = frame_id - FEEDBACK_FAULT_ID_BASE
             if node_id in self.fault_msg_dict:
                 self.fault_msg_dict[node_id].put(msg)
+            return
         else:
             return
         if node_id in self._msg_dict:

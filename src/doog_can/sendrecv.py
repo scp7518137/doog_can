@@ -96,11 +96,15 @@ class Receive_Threading(threading.Thread):
         if not self.fault_msg_dict:
             return None
 
-        for _, q in self.fault_msg_dict.items():
-            try:
-                return q.get_nowait()
-            except queue.Empty:
-                continue
+        while True:
+            if self.fault_msg_dict:
+                for _, q in self.fault_msg_dict.items():
+                    try:
+                        return q.get_nowait()
+                    except queue.Empty:
+                        continue
+
+
         return None
         
     def run(self) -> None:

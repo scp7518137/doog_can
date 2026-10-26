@@ -26,8 +26,8 @@ def set_direction(d1: int, d2: int) -> None:
     send_threading.transmit_slot(motor2.build_direction_cmd(d2))
 
 def ask_state() -> None:
-    send_threading.transmit_slot(motor1.build_ask_open_to_angle_cmd())
-    send_threading.transmit_slot(motor2.build_ask_open_to_angle_cmd())
+    send_threading.transmit_slot(motor1.build_ask_status_cmd())
+    send_threading.transmit_slot(motor2.build_ask_status_cmd())
 
 def read_angle() -> tuple[can.Message | None, can.Message | None]:
     print("waiting angle.........")
@@ -167,6 +167,7 @@ try:
     
 finally:
     ka1.stop()
+    time.sleep(1)
     print("==========================")
     ask_state()
     motor1_degree, motor2_degree = read_angle()
@@ -175,6 +176,7 @@ finally:
     print_angle(motor2_degree)
     print("===========================")
     check_default()
+    time.sleep(1)
     send_threading.my_stop()
     recv_threading.my_stop()
     bus1.shutdown()

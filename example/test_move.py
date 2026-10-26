@@ -53,7 +53,9 @@ def check_default() -> None:
     if result:
         print("Motor has err......")
         faulty_ids = [node_id for node_id, fault_tag in recv_threading.fault_tag.items() if fault_tag]
+        print(faulty_ids)
         read_angle()
+        time.sleep(2)
         for id in faulty_ids:
             msg: can.Message | None = recv_threading.receive_slot(id)
             assert msg is not None
@@ -61,7 +63,7 @@ def check_default() -> None:
             data: bytes = bytes(msg.data)
             code = dc.decode_faultcode(data)
             print(f"ID: {node_id}\nfault_code: {code.fault_code}\nnumber: {code.number}\nstate: {code.state}\nstattus1:{code.STATUS1}\nstatus2: {code.STATUS2}")
-            raise MortorError("MORTOR ERROR")
+        raise MortorError("MORTOR ERROR")
     print("continue......")
 
 

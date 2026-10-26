@@ -92,7 +92,7 @@ try:
     check_default()
 
     print("发送3")
-    set_angle(0, 0)
+    set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)

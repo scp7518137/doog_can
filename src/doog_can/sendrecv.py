@@ -93,17 +93,12 @@ class Receive_Threading(threading.Thread):
 
     def reveive_fault_slot(self) -> can.Message | None:
         """从错误槽提取id"""
-        if not self.fault_msg_dict:
-            return None
-
-        while True:
-            if self.fault_msg_dict:
-                for _, q in self.fault_msg_dict.items():
-                    try:
-                        return q.get_nowait()
-                    except queue.Empty:
-                        continue
-
+        while not all(q.empty() for q in self.fault_msg_dict.values()):
+            for _, q in self.fault_msg_dict.items():
+                try:
+                    return q.get_nowait()
+                except queue.Empty:
+                    continue
 
         return None
         

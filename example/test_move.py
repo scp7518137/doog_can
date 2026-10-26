@@ -48,11 +48,17 @@ def check_default() -> None:
         print(f"ID: {node_id}\ncode: {code.fault_code.name}\nin_back_off: {code.in_backoff}\nmask: {code.mask.name}\nSTATUS1: {code.STATUS1.name}\nSTATUS2: {code.STATUS2.name}")
 
 
-def print_angle(msg: can.Message) -> None:
+def print_angle1(msg: can.Message) -> None:
     node_id = msg.arbitration_id - 0x300
     data: bytes = bytes(msg.data)
     code = dc.decode_opentoangle(data)
     print(f"ID: {node_id}\nstatus: {code.status}, angle: {code.moveangle}, settingvoltage: {code.settingvoltage}, relhovdev: {code.relhovdev}, autotage: {code.autotage}")
+
+def print_angle2(msg: can.Message) -> None:
+    node_id = msg.arbitration_id - 0x200
+    data: bytes = bytes(msg.data)
+    code = dc.decode_frame(data)
+    print(f"ID: {node_id} bus: {code.bus_voltage} current: {code.current} mode: {code.mode} speed: {code.speed} status: {code.status}")
 
 try:
     bus1 = dc.can_init("can1")
@@ -79,24 +85,24 @@ try:
     set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle1(motor1_degree)
+    print_angle1(motor2_degree)
     check_default()
 
     print("发送2")
     set_angle(-10, -10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle1(motor1_degree)
+    print_angle1(motor2_degree)
     check_default()
 
     print("发送3")
     set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle1(motor1_degree)
+    print_angle1(motor2_degree)
     check_default()
 
 
@@ -135,22 +141,22 @@ try:
     set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle1(motor1_degree)
+    print_angle1(motor2_degree)
     check_default()
 
     print("发送5")
     set_angle(-10, -10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle2(motor1_degree)
+    print_angle2(motor2_degree)
     print("=============================")
     ask_state()
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle2(motor1_degree)
+    print_angle2(motor2_degree)
     print("==============================")
     check_default()
 
@@ -158,8 +164,8 @@ try:
     set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle1(motor1_degree)
+    print_angle1(motor2_degree)
     check_default()
 
 
@@ -172,8 +178,8 @@ finally:
     ask_state()
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
-    print_angle(motor1_degree)
-    print_angle(motor2_degree)
+    print_angle2(motor1_degree)
+    print_angle2(motor2_degree)
     print("===========================")
     check_default()
     time.sleep(1)

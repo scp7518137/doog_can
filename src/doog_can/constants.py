@@ -183,18 +183,18 @@ class MotorFaultCode_mask(IntFlag):
     11  SOFT_LIMIT
     12  COMM_TIMEOUT
     """
-    HARDWARE        = 0x0001
-    STALL           = 0x0002
-    ENCODER_STALL   = 0x0004
-    OVERTEMP        = 0x0008
-    OVERVOLT        = 0x0010
-    UNDERVOLT       = 0x0020
-    OVERSPEED       = 0x0040
-    PHASE_OC        = 0x0080
-    I2T             = 0x0100
-    POS_ERROR       = 0x0200
-    SOFT_LIMIT      = 0x0400
-    COMM_TIMEOUT    = 0x0800
+    HARDWARE        = 0x0002
+    STALL           = 0x0004
+    ENCODER_STALL   = 0x0008
+    OVERTEMP        = 0x0010
+    OVERVOLT        = 0x0020
+    UNDERVOLT       = 0x0040
+    OVERSPEED       = 0x0080
+    PHASE_OC        = 0x0100
+    I2T             = 0x0200
+    POS_ERROR       = 0x0400
+    SOFT_LIMIT      = 0x0800
+    COMM_TIMEOUT    = 0x1000
 
 
 class MotorFaultCode_ff(IntFlag):

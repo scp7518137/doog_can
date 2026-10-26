@@ -88,7 +88,7 @@ class Receive_Threading(threading.Thread):
         if node_id in self._msg_dict:
             recv_msg = self._msg_dict[node_id].get()
             if node_id + 0x400 == recv_msg.arbitration_id:
-                print("This is error f r a me")
+                print("This is error frame")
         else:
             raise IDError(f"unknow motor node_id")
         return recv_msg

@@ -54,7 +54,6 @@ def check_default() -> None:
         print("Motor has err......")
         faulty_ids = [node_id for node_id, fault_tag in recv_threading.fault_tag.items() if fault_tag]
         print(faulty_ids)
-        read_angle()
         time.sleep(2)
         for id in faulty_ids:
             msg: can.Message | None = recv_threading.receive_slot(id)

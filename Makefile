@@ -47,8 +47,10 @@ usb_reset_MAC:
 		@sudo ip addr replace 10.55.0.1/24 dev $(MAC)
 		@ping -c 10 10.55.0.2
 		@echo "=====computer set MAC====="
+		@ssh cat@10.55.0.2
 
 usb_board_reset:
 		@sudo ip link set usb0 up
 		@sudo ip addr replace 10.55.0.2/24 dev usb0
 		@echo "=====board set MAC====="
+		@ssh @ssh cat@10.55.0.2

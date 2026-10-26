@@ -65,8 +65,6 @@ def check_default() -> None:
     print("continue......")
 
 
-
-
 def print_angle(msg: can.Message) -> None:
     node_id = msg.arbitration_id - 0x300
     data: bytes = bytes(msg.data)
@@ -86,6 +84,7 @@ try:
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
+    print(recv_threading.fault_tag)
     check_default()
     
     set_angle(-30, -30)
@@ -93,21 +92,23 @@ try:
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
+    print(recv_threading.fault_tag)
     check_default()
-
-
 
     set_angle(30, 30)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
+    print(recv_threading.fault_tag)
     check_default()
 
     
 finally:
     ka1.stop()
+    time.sleep(2)
     check_default()
+    print(recv_threading.fault_tag)
     time.sleep(2)
     send_threading.my_stop()
     recv_threading.my_stop()

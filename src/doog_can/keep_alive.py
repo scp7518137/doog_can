@@ -52,15 +52,23 @@ class KeepAlive():
         stored in the ``error`` property while stopping the loop.
         """
         try:
+            next_time = time.perf_counter()
             while self._running:
                 for i in range(self._start_number, self._stop_number + 1):
+                    if not self._running:
+                        break
                     frame_id, data = build_frame(i, CmdList.KEEPALIVE, 0)
                     msg = can.Message(arbitration_id=frame_id, is_extended_id=False, data=data)
                     try:
                         self.send_threading.transmit_slot(msg)
                     except can.CanError:
                         _logger.warning("keepalive send failed", exc_info=True)
-                    time.sleep(self._period)
+                    next_time += self._period
+                    delay = next_time - time.perf_counter()
+                    if delay > 0:
+                        time.sleep(self._period)
+                    else:
+                        next_time = time.perf_counter()
 
         except Exception as exc:
             self._error = exc

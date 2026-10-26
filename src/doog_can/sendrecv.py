@@ -100,7 +100,7 @@ class Receive_Threading(threading.Thread):
             try:
                 return q.get_nowait()
             except queue.Empty:
-                break
+                continue
         return None
         
     def run(self) -> None:

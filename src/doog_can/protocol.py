@@ -40,7 +40,7 @@ class FaultrCode:
     """
     fault_code: MotorFaultCode_z
     in_backoff: bool
-    mask: int
+    mask: MotorFaultCode_mask
     STATUS1: MotorFaultCode_ff
     STATUS2: MotorFaultCode_ss
 

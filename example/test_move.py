@@ -31,7 +31,7 @@ def set_model(model1: int, model2: int) -> None:
 def set_angle(angle1: float, angle2: float) -> None:
     send_threading.transmit_slot(motor1.build_open_to_angle_cmd(angle1))
     send_threading.transmit_slot(motor2.build_open_to_angle_cmd(angle2))
-    print("set degree")
+    print("set angle")
 
 def set_direction(d1: int, d2: int) -> None:
     send_threading.transmit_slot(motor1.build_direction_cmd(d1))
@@ -57,7 +57,7 @@ def check_default() -> None:
         assert msg is not None
         node_id = msg.arbitration_id - 0x400
         code: dc.FaultrCode = dc.decode_faultcode(bytes(msg.data))
-        print(f"ID: {node_id}\ncode: {code.fault_code}\nin_back_off{code.in_backoff}\nmask: {code.mask}STATUS1: {code.STATUS1}\nSTATUS2: {code.STATUS2}")
+        print(f"ID: {node_id}\ncode: {code.fault_code.name}\nin_back_off: {code.in_backoff}\nmask: {code.mask.name}\nSTATUS1: {code.STATUS1.name}\nSTATUS2: {code.STATUS2.name}")
 
 
 def print_angle(msg: can.Message) -> None:

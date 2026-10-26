@@ -43,27 +43,21 @@ def ask_state() -> None:
 
 def read_angle() -> tuple[can.Message | None, can.Message | None]:
     print("waiting angle.........")
-    motor1_msg: can.Message | None = recv_threading.receive_slot(1)
-    motor2_msg: can.Message | None = recv_threading.receive_slot(2)
+    motor1_msg: can.Message | None = recv_threading.receive_nomal_slot(1)
+    motor2_msg: can.Message | None = recv_threading.receive_nomal_slot(2)
     return motor1_msg, motor2_msg
 
 def check_default() -> None:
-    print("Checking fault tag......")
-    result = any(recv_threading.fault_tag.values())
-    if result:
-        print("Motor has err......")
-        faulty_ids = [node_id for node_id, fault_tag in recv_threading.fault_tag.items() if fault_tag]
-        print(faulty_ids)
-        time.sleep(2)
-        for id in faulty_ids:
-            msg: can.Message | None = recv_threading.receive_slot(id)
-            assert msg is not None
-            node_id = msg.arbitration_id - 0x400
-            data: bytes = bytes(msg.data)
-            code = dc.decode_faultcode(data)
-            print(f"ID: {node_id}\nfault_code: {code.fault_code}\nnumber: {code.number}\nstate: {code.state}\nstattus1:{code.STATUS1}\nstatus2: {code.STATUS2}")
-        # raise MortorError("MORTOR ERROR")
-    print("continue......")
+    print("Checking fault frame......")
+    while True:
+        msg: can.Message | None = recv_threading.reveive_fault_slot()
+        if msg is None:
+            break
+        print("Motors have err......")
+        assert msg is not None
+        node_id = msg.arbitration_id - 0x400
+        code: dc.FaultrCode = dc.decode_faultcode(bytes(msg.data))
+        print(f"ID: {node_id}\ncode: {code.fault_code}\nin_back_off{code.in_backoff}\nmask: {code.mask}STATUS1: {code.STATUS1}\nSTATUS2: {code.STATUS2}")
 
 
 def print_angle(msg: can.Message) -> None:
@@ -85,32 +79,31 @@ try:
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
-    print(recv_threading.fault_tag)
     check_default()
+
     
     set_angle(-30, -30)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
-    print(recv_threading.fault_tag)
     check_default()
+
 
     set_angle(30, 30)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
-    print(recv_threading.fault_tag)
     check_default()
+
 
     
 finally:
     ka1.stop()
-    time.sleep(2)
+    time.sleep(1)
     check_default()
-    print(recv_threading.fault_tag)
-    time.sleep(2)
+    time.sleep(1)
     send_threading.my_stop()
     recv_threading.my_stop()
     bus1.shutdown()

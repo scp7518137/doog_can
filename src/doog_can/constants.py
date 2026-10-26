@@ -168,15 +168,36 @@ class MotorFaultCode_z(IntEnum):
     SOFT_LIMIT      = 11
     COMM_TIMEOUT    = 12
 
-class MotorFaultCode_f(IntEnum):
+class MotorFaultCode_mask(IntFlag):
     """
-    0x80     Fault status and Model 1 and model 2 is unavailable
-    0xC0     Fault status and Model 1 and model 2 is available
+    1   HARDWARE
+    2   STALL
+    3   ENCODER_STALL
+    4   OVERTEMP
+    5   OVERVOLT
+    6   UNDERVOLT
+    7   OVERSPEED
+    8   PHASE_OC
+    9   I2T
+    10  POS_ERROR
+    11  SOFT_LIMIT
+    12  COMM_TIMEOUT
     """
-    MODELAVA    = 0x80
-    MODELUAVA   = 0xc0
+    HARDWARE        = 0x0001
+    STALL           = 0x0002
+    ENCODER_STALL   = 0x0004
+    OVERTEMP        = 0x0008
+    OVERVOLT        = 0x0010
+    UNDERVOLT       = 0x0020
+    OVERSPEED       = 0x0040
+    PHASE_OC        = 0x0080
+    I2T             = 0x0100
+    POS_ERROR       = 0x0200
+    SOFT_LIMIT      = 0x0400
+    COMM_TIMEOUT    = 0x0800
 
-class MotorFaultCode_ff(IntEnum):
+
+class MotorFaultCode_ff(IntFlag):
     """
     0 	0x0001 	VDS_LC 	C-phase low-side VDS overcurrent
     1 	0x0002 	VDS_HC 	C-phase high-side VDS overcurrent
@@ -190,6 +211,7 @@ class MotorFaultCode_ff(IntEnum):
     9 	0x0200 	VDS_OCP 	VDS monitor overcurrent (phase current exceeds VDS_LVL threshold; usually stall / short circuit)
     10 	0x0400 	FAULT 	Fault status bit (nFAULT logic OR): latches high on any hardware fault; use as a master switch, not as an individual fault cause
     """
+    NONE     = 0
     VDS_LC   = 0x0001
     VDS_HC   = 0x0002
     VDS_LB   = 0x0004
@@ -202,7 +224,8 @@ class MotorFaultCode_ff(IntEnum):
     VDS_OCP  = 0x0200
     FAULT    = 0x0400
 
-class MotorFaultCode_ss(IntEnum):
+
+class MotorFaultCode_ss(IntFlag):
     """
     0 	0x0001 	VGS_LC 	C-phase low-side MOSFET VGS gate drive fault
     1 	0x0002 	VGS_HC 	C-phase high-side MOSFET VGS gate drive fault
@@ -216,6 +239,7 @@ class MotorFaultCode_ss(IntEnum):
     9 	0x0200 	SB_OC 	B-phase CSA overcurrent
     10 	0x0400 	SA_OC 	A-phase CSA overcurrent
     """
+    NONE     = 0
     VGS_LC   = 0x0001
     VGS_HC   = 0x0002
     VGS_LB   = 0x0004

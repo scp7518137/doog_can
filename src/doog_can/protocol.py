@@ -20,10 +20,10 @@ from .constants import (
     SCALE_MOVEANGLE,
     SCALE_SETTINGVOLTAGE,
     SCALE_RELHOVDEV,
+    MotorFaultCode_mask,
     MotorFaultCode_ff,
     MotorFaultCode_ss,
     MotorFaultCode_z,
-    MotorFaultCode_f,
     CommandMode,
     Direction,
     FeedbackMode,
@@ -39,8 +39,8 @@ class FaultrCode:
     """
     """
     fault_code: MotorFaultCode_z
-    state: MotorFaultCode_f
-    number: int
+    in_backoff: bool
+    mask: int
     STATUS1: MotorFaultCode_ff
     STATUS2: MotorFaultCode_ss
 
@@ -267,12 +267,25 @@ def decode_faultcode(msgdata: bytes) -> FaultrCode:
     """
     if len(msgdata) != CAN_DATA_LEN:
         raise ValueError(f"msgdata should {CAN_DATA_LEN} bytes, but {len(msgdata)} bytes")
+    
+    fault_code      =   MotorFaultCode_z(msgdata[0])
+    in_backoff      =   bool(msgdata[1] & 0x01)
+    valid_status    =   bool(msgdata[1] & 0x03)
+    m               =   int.from_bytes(msgdata[2:4], "little")
+    mask            =   MotorFaultCode_mask(m)
+    if valid_status and fault_code==MotorFaultCode_z.HARDWARE:
+        s1              =   int.from_bytes(msgdata[4:6], "little")
+        s2              =   int.from_bytes(msgdata[6:8], "little")
+        status1         =   MotorFaultCode_ff(s1)
+        status2         =   MotorFaultCode_ss(s2)
+    else:
+        status1 = MotorFaultCode_ff.NONE
+        status2 = MotorFaultCode_ss.NONE
+
     return FaultrCode(
-        fault_code=MotorFaultCode_z(msgdata[0]),
-        state=MotorFaultCode_f(msgdata[1]),
-        number = int.from_bytes(msgdata[2:4], "little", signed=True),
-        STATUS1=MotorFaultCode_ff(msgdata[4:6]),
-        STATUS2=MotorFaultCode_ss(msgdata[6:7]),
+        fault_code  =   fault_code,
+        in_backoff  =   in_backoff,
+        mask        =   mask,
+        STATUS1     =   status1,
+        STATUS2     =   status2,
     )
-
-

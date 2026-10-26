@@ -61,8 +61,8 @@ class Receive_Threading(threading.Thread):
             node_id: queue.Queue(maxsize=MAXSIZE)
             for node_id in range(1,13)
         }
-        self.fault_tag: dict[int, bool] = {
-            node_id: False
+        self.fault_msg_dict: dict[int, queue.Queue[can.Message]] = {
+            node_id: queue.Queue(maxsize=MAXSIZE)
             for node_id in range(1,13)
         }
 
@@ -76,22 +76,32 @@ class Receive_Threading(threading.Thread):
             node_id = frame_id - FEEDBACK_OPENTOANGLE_ID_BASE
         elif NODE_ID_400_MIN <= frame_id <= NODE_ID_400_MAX:
             node_id = frame_id - FEEDBACK_FAULT_ID_BASE
-            if node_id in self.fault_tag:
-                self.fault_tag[node_id] = True
+            if node_id in self.fault_msg_dict:
+                self.fault_msg_dict[node_id].put(msg)
         else:
             return
         if node_id in self._msg_dict:
             self._msg_dict[node_id].put(msg)
 
-    def receive_slot(self, node_id) -> can.Message | None:
+    def receive_nomal_slot(self, node_id) -> can.Message | None:
         """从特定id导出对应的msg"""
         if node_id in self._msg_dict:
             recv_msg = self._msg_dict[node_id].get()
-            if node_id + 0x400 == recv_msg.arbitration_id:
-                print("This is error frame")
         else:
             raise IDError(f"unknow motor node_id")
         return recv_msg
+
+    def reveive_fault_slot(self) -> can.Message | None:
+        """从错误槽提取id"""
+        if not self.fault_msg_dict:
+            return None
+
+        for _, q in self.fault_msg_dict.items():
+            try:
+                return q.get_nowait()
+            except queue.Empty:
+                break
+        return None
         
     def run(self) -> None:
         """运行"""

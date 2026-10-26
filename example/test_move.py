@@ -145,6 +145,13 @@ try:
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
     print_angle(motor2_degree)
+    print("=============================")
+    ask_state()
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    print("==============================")
     check_default()
 
     print("发送6")
@@ -156,12 +163,18 @@ try:
     check_default()
 
 
+
     
 finally:
     ka1.stop()
-    time.sleep(1)
+    print("==========================")
+    ask_state()
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    print("===========================")
     check_default()
-    time.sleep(1)
     send_threading.my_stop()
     recv_threading.my_stop()
     bus1.shutdown()

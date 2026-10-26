@@ -67,7 +67,7 @@ def print_angle2(msg: can.Message) -> None:
     node_id = msg.arbitration_id - 0x200
     data: bytes = bytes(msg.data)
     code = dc.decode_frame(data)
-    print(f"ID: {node_id} bus: {code.bus_voltage} current: {code.current} mode: {code.mode} speed: {code.speed} status: {code.status}")
+    print(f"ID: {node_id} bus: {code.bus_voltage} current: {code.current} mode: {code.mode.name} speed: {code.speed} status: {code.status.name}")
 
 try:
     bus1 = dc.can_init("can1")

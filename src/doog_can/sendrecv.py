@@ -6,6 +6,7 @@ import threading
 from .constants import (
     FEEDBACK_FRAME_ID_BASE,
     FEEDBACK_OPENTOANGLE_ID_BASE,
+    FEEDBACK_FAULT_ID_BASE,
 )
 
 NODE_ID_200_MIN = FEEDBACK_FRAME_ID_BASE + 1
@@ -13,6 +14,9 @@ NODE_ID_200_MAX = FEEDBACK_FRAME_ID_BASE + 12
 
 NODE_ID_300_MIN = FEEDBACK_OPENTOANGLE_ID_BASE + 1
 NODE_ID_300_MAX = FEEDBACK_OPENTOANGLE_ID_BASE + 12
+
+NODE_ID_400_MIN = FEEDBACK_FAULT_ID_BASE + 1
+NODE_ID_400_MAX = FEEDBACK_FAULT_ID_BASE + 12
 
 MAXSIZE = 100
 
@@ -49,6 +53,7 @@ class Transmit_Threading(threading.Thread):
 
 class Receive_Threading(threading.Thread):
     def __init__(self, bus:can.BusABC):
+        """初始化"""
         super().__init__(name = "Receive_Threading", daemon=True)
         self._bus = bus
         self.running_event = threading.Event()
@@ -56,19 +61,30 @@ class Receive_Threading(threading.Thread):
             node_id: queue.Queue(maxsize=MAXSIZE)
             for node_id in range(1,13)
         }
+        self.fault_tag: dict[int, bool] = {
+            node_id: False
+            for node_id in range(1,13)
+        }
+
 
     def _filter(self, msg: can.Message) -> None:
+        """判断前缀 对id分类"""
         frame_id = msg.arbitration_id
         if NODE_ID_200_MIN <= frame_id <= NODE_ID_200_MAX:
             node_id = frame_id - FEEDBACK_FRAME_ID_BASE
         elif NODE_ID_300_MIN <= frame_id <= NODE_ID_300_MAX:
             node_id = frame_id - FEEDBACK_OPENTOANGLE_ID_BASE
+        elif NODE_ID_400_MIN <= frame_id <= NODE_ID_400_MAX:
+            node_id = frame_id - FEEDBACK_FAULT_ID_BASE
+            if node_id in self.fault_tag:
+                self.fault_tag[node_id] = True
         else:
             return
         if node_id in self._msg_dict:
             self._msg_dict[node_id].put(msg)
 
     def receive_slot(self, node_id) -> can.Message | None:
+        """从特定id导出对应的msg"""
         if node_id in self._msg_dict:
             recv_msg = self._msg_dict[node_id].get()
         else:
@@ -76,6 +92,7 @@ class Receive_Threading(threading.Thread):
         return recv_msg
         
     def run(self) -> None:
+        """运行"""
         while self.running_event.is_set():
             msg: can.Message | None = self._bus.recv(timeout=0.05)
             if msg is not None:

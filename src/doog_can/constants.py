@@ -8,6 +8,9 @@ CMD_FRAME_ID_BASE: int = 0x100
 FEEDBACK_FRAME_ID_BASE: int = 0x200
 # Base arbitration ID for incoming open-to-angle feedback frames.
 FEEDBACK_OPENTOANGLE_ID_BASE: int = 0x300
+
+FEEDBACK_FAULT_ID_BASE: int = 0x400
+
 # Minimum valid motor node ID.
 NODE_ID_MIN: int = 1
 # Maximum valid motor node ID.

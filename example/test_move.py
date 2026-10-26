@@ -75,6 +75,7 @@ try:
 
     set_model(1, 1)
 
+    print("发送1")
     set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
@@ -82,7 +83,7 @@ try:
     print_angle(motor2_degree)
     check_default()
 
-    
+    print("发送2")
     set_angle(-10, -10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
@@ -90,7 +91,7 @@ try:
     print_angle(motor2_degree)
     check_default()
 
-
+    print("发送3")
     set_angle(0, 0)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
@@ -130,6 +131,7 @@ try:
 
     set_model(1, 1)
 
+    print("发送4")
     set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
@@ -137,7 +139,7 @@ try:
     print_angle(motor2_degree)
     check_default()
 
-    
+    print("发送5")
     set_angle(-10, -10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
@@ -145,7 +147,7 @@ try:
     print_angle(motor2_degree)
     check_default()
 
-
+    print("发送6")
     set_angle(0, 0)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None

@@ -3,21 +3,9 @@ import can
 import time
 from doog_can import StatusReport
 
-bus1 = dc.can_init("can1")
-# 定义bus1
-
-motor1 = dc.Motor(bus=bus1, node_id=1)
-motor2 = dc.Motor(bus=bus1, node_id=2)
-print("定义电机1/2")
-
-send_threading = dc.Transmit_Threading(bus=bus1)
-recv_threading = dc.Receive_Threading(bus=bus1)
-print("初始化发送/接受线程")
 
 class MortorError(Exception):
     pass
-
-ka1 = dc.KeepAlive(start_number=1, stop_number=2, bus=bus1, send_threading=send_threading)
 
 def start() -> None:
     send_threading.my_start()
@@ -67,6 +55,19 @@ def print_angle(msg: can.Message) -> None:
     print(f"ID: {node_id}\nstatus: {code.status}, angle: {code.moveangle}, settingvoltage: {code.settingvoltage}, relhovdev: {code.relhovdev}, autotage: {code.autotage}")
 
 try:
+    bus1 = dc.can_init("can1")
+    # 定义bus1
+
+    motor1 = dc.Motor(bus=bus1, node_id=1)
+    motor2 = dc.Motor(bus=bus1, node_id=2)
+    print("定义电机1/2")
+
+    send_threading = dc.Transmit_Threading(bus=bus1)
+    recv_threading = dc.Receive_Threading(bus=bus1)
+    print("初始化发送/接受线程")
+
+    ka1 = dc.KeepAlive(start_number=1, stop_number=2, bus=bus1, send_threading=send_threading)
+
     start()
     set_model(2, 2)
     print("设置为对齐模式")
@@ -74,7 +75,7 @@ try:
 
     set_model(1, 1)
 
-    set_angle(30, 30)
+    set_angle(10, 10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
@@ -82,7 +83,7 @@ try:
     check_default()
 
     
-    set_angle(-30, -30)
+    set_angle(-10, -10)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)
@@ -90,7 +91,62 @@ try:
     check_default()
 
 
-    set_angle(30, 30)
+    set_angle(0, 0)
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    check_default()
+
+
+    
+finally:
+    ka1.stop()
+    time.sleep(1)
+    check_default()
+    time.sleep(1)
+    send_threading.my_stop()
+    recv_threading.my_stop()
+    bus1.shutdown()
+
+try:
+    bus1 = dc.can_init("can1")
+    # 定义bus1
+
+    motor1 = dc.Motor(bus=bus1, node_id=1)
+    motor2 = dc.Motor(bus=bus1, node_id=2)
+    print("定义电机1/2")
+
+    send_threading = dc.Transmit_Threading(bus=bus1)
+    recv_threading = dc.Receive_Threading(bus=bus1)
+    print("初始化发送/接受线程")
+
+    ka1 = dc.KeepAlive(start_number=1, stop_number=2, bus=bus1, send_threading=send_threading)
+
+    start()
+    set_model(2, 2)
+    print("设置为对齐模式")
+    time.sleep(1)
+
+    set_model(1, 1)
+
+    set_angle(10, 10)
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    check_default()
+
+    
+    set_angle(-10, -10)
+    motor1_degree, motor2_degree = read_angle()
+    assert motor1_degree and motor2_degree is not None
+    print_angle(motor1_degree)
+    print_angle(motor2_degree)
+    check_default()
+
+
+    set_angle(0, 0)
     motor1_degree, motor2_degree = read_angle()
     assert motor1_degree and motor2_degree is not None
     print_angle(motor1_degree)

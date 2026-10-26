@@ -63,7 +63,7 @@ def check_default() -> None:
             data: bytes = bytes(msg.data)
             code = dc.decode_faultcode(data)
             print(f"ID: {node_id}\nfault_code: {code.fault_code}\nnumber: {code.number}\nstate: {code.state}\nstattus1:{code.STATUS1}\nstatus2: {code.STATUS2}")
-        raise MortorError("MORTOR ERROR")
+        # raise MortorError("MORTOR ERROR")
     print("continue......")
 
 

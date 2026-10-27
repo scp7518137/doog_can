@@ -59,7 +59,7 @@ class Motor:
 
     def recv_message(self) -> can.Message | None:
         try:
-            return(self.recv_dir[self.node_id].get(timeout=0.005))
+            return(self.recv_dir[self.node_id].get())
         except queue.Empty:
             return None
 

@@ -45,6 +45,8 @@ try:
 
     motor1.send_ask_status_cmd()
     motor2.send_ask_status_cmd()
+    print_motor(motor1, motor1.decode_normal_code())
+    print_motor(motor2, motor2.decode_normal_code())
 
     motor1.send_open_to_angle_cmd(10)
     motor2.send_open_to_angle_cmd(10)

@@ -78,7 +78,7 @@ finally:
     ka1.stop()
     time.sleep(1)
     print_motor(motor1, motor1.check_motors())
-    print_motor(motor1, motor1.check_motors())
+    print_motor(motor2, motor2.check_motors())
     time.sleep(1)
     send_threading.my_stop()
     recv_threading.my_stop()

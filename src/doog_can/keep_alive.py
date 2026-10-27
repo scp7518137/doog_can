@@ -31,14 +31,13 @@ class KeepAlive():
             nodes; the per-node interval is derived from it. Defaults to half
             of COMM_TIMEOUT_MS.
     """
-    def __init__(self, start_number: int, stop_number: int, bus: can.BusABC, send_threading: Transmit_Threading, all_period:float = COMM_TIMEOUT_MS/ 4 / 1000) -> None:
+    def __init__(self, start_number: int, stop_number: int, send_threading: Transmit_Threading, all_period:float = COMM_TIMEOUT_MS/ 2 / 1000) -> None:
         if stop_number - start_number < 0:
             raise ValueError("number not alive")
         if not (NODE_ID_MIN <= start_number <= stop_number <= NODE_ID_MAX):
             raise ValueError("number not alive")
         self._start_number: int = start_number
         self._stop_number: int = stop_number
-        self._bus = bus
         self._period: float = all_period / (stop_number  - start_number + 1)
         self._thread: threading.Thread | None = None
         self._running: bool = False

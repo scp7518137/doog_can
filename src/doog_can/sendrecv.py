@@ -9,6 +9,10 @@ from .constants import (
     FEEDBACK_FAULT_ID_BASE,
 )
 
+from .protocol import(
+    IDError,
+)
+
 NODE_ID_200_MIN = FEEDBACK_FRAME_ID_BASE + 1
 NODE_ID_200_MAX = FEEDBACK_FRAME_ID_BASE + 12
 
@@ -20,24 +24,22 @@ NODE_ID_400_MAX = FEEDBACK_FAULT_ID_BASE + 12
 
 MAXSIZE = 100
 
-class IDError(Exception):
-    """Raised when a received CAN frame has an unepxected ID"""
-    pass
+
 
 
 class Transmit_Threading(threading.Thread):
     def __init__(self, bus:can.BusABC) -> None:
         super().__init__(name = "Transmit_Threading", daemon=True)
         self._bus: can.BusABC = bus
-        self._messages: queue.Queue[can.Message | None] = queue.Queue(maxsize=MAXSIZE)
+        self.messages: queue.Queue[can.Message | None] = queue.Queue(maxsize=MAXSIZE)
 
 
     def transmit_slot(self, msg:can.Message) -> None:
-        self._messages.put(msg)
+        self.messages.put(msg)
         
     def run(self) -> None:
         while True:
-            msg: can.Message | None = self._messages.get()
+            msg: can.Message | None = self.messages.get()
             if msg is None:
                 break
             self._bus.send(msg)
@@ -45,9 +47,8 @@ class Transmit_Threading(threading.Thread):
     def my_start(self) -> None:
         self.start()
 
-
     def my_stop(self) -> None:
-        self._messages.put(None)
+        self.messages.put(None)
         self.join()
 
 
@@ -57,7 +58,7 @@ class Receive_Threading(threading.Thread):
         super().__init__(name = "Receive_Threading", daemon=True)
         self._bus = bus
         self.running_event = threading.Event()
-        self._msg_dict: dict[int, queue.Queue[can.Message]] = {
+        self.msg_dict: dict[int, queue.Queue[can.Message]] = {
             node_id: queue.Queue(maxsize=MAXSIZE)
             for node_id in range(1,13)
         }
@@ -81,27 +82,27 @@ class Receive_Threading(threading.Thread):
             return
         else:
             return
-        if node_id in self._msg_dict:
-            self._msg_dict[node_id].put(msg)
+        if node_id in self.msg_dict:
+            self.msg_dict[node_id].put(msg)
 
-    def receive_nomal_slot(self, node_id) -> can.Message | None:
-        """从特定id导出对应的msg"""
-        if node_id in self._msg_dict:
-            recv_msg = self._msg_dict[node_id].get()
-        else:
-            raise IDError(f"unknow motor node_id")
-        return recv_msg
+    # def receive_nomal_slot(self, node_id) -> can.Message | None:
+    #     """从特定id导出对应的msg"""
+    #     if node_id in self.msg_dict:
+    #         recv_msg = self.msg_dict[node_id].get()
+    #     else:
+    #         raise IDError(f"unknow motor node_id")
+    #     return recv_msg
 
-    def reveive_fault_slot(self) -> can.Message | None:
-        """从错误槽提取id"""
-        while not all(q.empty() for q in self.fault_msg_dict.values()):
-            for _, q in self.fault_msg_dict.items():
-                try:
-                    return q.get_nowait()
-                except queue.Empty:
-                    continue
+    # def reveive_fault_slot(self) -> can.Message | None:
+    #     """从错误槽提取id"""
+    #     while not all(q.empty() for q in self.fault_msg_dict.values()):
+    #         for _, q in self.fault_msg_dict.items():
+    #             try:
+    #                 return q.get_nowait()
+    #             except queue.Empty:
+    #                 continue
 
-        return None
+    #     return None
         
     def run(self) -> None:
         """运行"""

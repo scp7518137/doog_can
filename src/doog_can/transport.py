@@ -36,4 +36,4 @@ def vbus_close(bus:can.BusABC) -> None:
     Args:
         bus: The CAN bus instance to close.
     """
-    bus.shutdown
+    bus.shutdown()

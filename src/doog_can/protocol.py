@@ -34,6 +34,10 @@ from .constants import (
 )
 from dataclasses import dataclass
 
+class IDError(Exception):
+    """Raised when a received CAN frame has an unepxected ID"""
+    pass
+
 @dataclass(frozen=True)
 class FaultrCode:
     """
@@ -188,28 +192,28 @@ def build_frame(node_id: int, cmd: int, value: float ) -> tuple[int, bytes]:
     """
     frame_id = cmd_frame_id(node_id)
     match cmd:
-            case CmdList.SPEED:
-                payload = _pack_int16(value, SCALE_SPEED)
-            case CmdList.VOLTAGE:
-                payload = _pack_int16(value, SCALE_VOLTAGE)
-            case CmdList.MODE:
-                payload = bytes([CommandMode(value)])
-            case CmdList.DIRECTION:
-                payload = bytes([Direction(value)])
-            case CmdList.TORQUE:
-                payload = _pack_int16(value, SCALE_TORQUE)
-            case CmdList.POSITION:
-                payload = _pack_int32(value, SCALE_POSITION)
-            case CmdList.OPENTOANGLE:
-                payload = _pack_int16(value, SCALE_OPENTOANGLE)
-            case CmdList.KEEPALIVE:
-                payload = b""
-            case CmdList.ASKSTATUS:
-                payload = b""
-            case CmdList.ASKOPENTOANGLE:
-                payload = b""
-            case _:
-                raise ValueError(f"This command not alive: {cmd:#x}")
+        case CmdList.SPEED:
+            payload = _pack_int16(value, SCALE_SPEED)
+        case CmdList.VOLTAGE:
+            payload = _pack_int16(value, SCALE_VOLTAGE)
+        case CmdList.MODE:
+            payload = bytes([CommandMode(value)])
+        case CmdList.DIRECTION:
+            payload = bytes([Direction(value)])
+        case CmdList.TORQUE:
+            payload = _pack_int16(value, SCALE_TORQUE)
+        case CmdList.POSITION:
+            payload = _pack_int32(value, SCALE_POSITION)
+        case CmdList.OPENTOANGLE:
+            payload = _pack_int16(value, SCALE_OPENTOANGLE)
+        case CmdList.KEEPALIVE:
+            payload = b""
+        case CmdList.ASKSTATUS:
+            payload = b""
+        case CmdList.ASKOPENTOANGLE:
+            payload = b""
+        case _:
+            raise ValueError(f"This command not alive: {cmd:#x}")
 
     if len(payload) > CAN_DATA_LEN - 1:
         raise ValueError(f"payload max {CAN_DATA_LEN - 1} bytes, but {len(payload)} bytes")

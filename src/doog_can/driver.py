@@ -28,10 +28,12 @@ import queue
 
 
 class Motor:
-    """Control an motor over the CAN bus.
+    """Control a motor over the CAN bus.
 
     Args:
-        bus: CAN bus used to send and receive mseeages.
+        send_message: Queue used to transmit outgoing messages.
+        recv_dir: Per-node queues for incoming normal frames.
+        fault_msg_dict: Per-node queues for incoming fault frames.
         node_id: ID of the motor node.
     """
     def __init__(
@@ -55,9 +57,11 @@ class Motor:
         return msg
 
     def send_message(self, msg: can.Message) -> None:
+        """Queue a built message for transmission."""
         self.message.put(msg)
 
     def recv_message(self) -> can.Message | None:
+        """Block until the next message for this node is available."""
         try:
             return(self.recv_dir[self.node_id].get())
         except queue.Empty:
@@ -73,6 +77,7 @@ class Motor:
         return self._msg_build(CmdList.SPEED, value)
 
     def send_speed_cmd(self, value: float) -> None:
+        """Send a speed command."""
         self.send_message(self.build_speed_cmd(value))
 
 
@@ -86,6 +91,7 @@ class Motor:
         return self._msg_build(CmdList.VOLTAGE, value)
 
     def send_voltage_cmd(self, value: float) -> None:
+        """Send a voltage command."""
         self.send_message(self.build_voltage_cmd(value))
    
 
@@ -104,6 +110,16 @@ class Motor:
         return self._msg_build(CmdList.MODE, value)
 
     def send_mode_cmd(self, value: int) -> None:
+        """Send a mode command.
+
+        Args:
+            0	IDLE	                No output.
+            1	open-loop	            Open-loop voltage/speed drive.
+            2	align	                Two-step rotor alignment.
+            3	closed-loop torque      With Iq directly commanded.
+            4   closed-loop speed	    Speed loop -> current loop.
+            5	closed-loop position	Position loop -> speed loop -> current loop.
+        """
         self.send_message(self.build_mode_cmd(value))
     
     def build_direction_cmd(self, value: int) -> can.Message:
@@ -116,6 +132,12 @@ class Motor:
         return self._msg_build(CmdList.DIRECTION, value)
 
     def send_direction_cmd(self, value: int) -> None:
+        """Send a direction command.
+
+        Args:
+            0  Forward rotation
+            1  Reverse rotation
+        """
         self.send_message(self.build_direction_cmd(value))
 
 
@@ -128,6 +150,7 @@ class Motor:
         return self._msg_build(CmdList.TORQUE, value)
 
     def send_torque_cmd(self, value: float) -> None:
+        """Send a torque command."""
         self.send_message(self.build_torque_cmd(value))
 
     def build_position_cmd(self, value: float) -> can.Message:
@@ -139,6 +162,7 @@ class Motor:
         return self._msg_build(CmdList.POSITION, value)
 
     def send_position_cmd(self, value: float) -> None:
+        """Send a position command."""
         self.send_message(self.build_position_cmd(value))
 
     def build_open_to_angle_cmd(self, value: float) -> can.Message:
@@ -150,6 +174,7 @@ class Motor:
         return self._msg_build(CmdList.OPENTOANGLE, value)
 
     def send_open_to_angle_cmd(self, value: float) -> None:
+        """Send an open-to-angle command."""
         self.send_message(self.build_open_to_angle_cmd(value))
 
 
@@ -159,6 +184,7 @@ class Motor:
         return self._msg_build(CmdList.ASKSTATUS)
 
     def send_ask_status_cmd(self) -> None:
+        """Send an ask-status command."""
         self.send_message(self.build_ask_status_cmd())
 
     def build_ask_open_to_angle_cmd(self) -> can.Message:
@@ -166,6 +192,7 @@ class Motor:
         return self._msg_build(CmdList.ASKOPENTOANGLE)
 
     def send_ask_open_to_angle_cmd(self) -> None:
+        """Send an ask-open-to-angle command."""
         self.send_message(self.build_ask_open_to_angle_cmd())
 
 
@@ -182,6 +209,7 @@ class Motor:
         return decode_faultcode(bytes(msgdata))
 
     def decode_normal_code(self) -> StatusReport | OpenToAngle | None:
+        """Receive and decode the next status or open-to-angle frame."""
         msg = self.recv_message()
 
         if msg is None:
@@ -193,6 +221,7 @@ class Motor:
             return self.decode_ask_open_to_angle(msg.data)
 
     def check_motors(self) -> FaultrCode | None:
+        """Decode and return the next fault frame across all nodes, if any."""
         while not all(q.empty() for q in self.fault_msg_dict.values()):
             for _, q in self.fault_msg_dict.items():
                 try:

@@ -35,12 +35,19 @@ from .constants import (
 from dataclasses import dataclass
 
 class IDError(Exception):
-    """Raised when a received CAN frame has an unepxected ID"""
+    """Raised when a received CAN frame has an unexpected ID."""
     pass
 
 @dataclass(frozen=True)
 class FaultrCode:
-    """
+    """Decoded motor fault report.
+
+    Attributes:
+        fault_code: Primary motor fault category.
+        in_backoff: Whether the motor is in backoff.
+        mask: Active fault mask bits.
+        STATUS1: Driver fault register 1 (only valid for hardware faults).
+        STATUS2: Driver fault register 2 (only valid for hardware faults).
     """
     fault_code: MotorFaultCode_z
     in_backoff: bool
@@ -267,7 +274,16 @@ def decode_opentoangle(msgdata: bytes) -> OpenToAngle:
     )
 
 def decode_faultcode(msgdata: bytes) -> FaultrCode:
-    """
+    """Decode a fault feedback frame into a FaultrCode.
+
+    Args:
+        msgdata: Raw CAN data bytes of length CAN_DATA_LEN.
+
+    Returns:
+        The decoded fault report.
+
+    Raises:
+        ValueError: The data length is not CAN_DATA_LEN.
     """
     if len(msgdata) != CAN_DATA_LEN:
         raise ValueError(f"msgdata should {CAN_DATA_LEN} bytes, but {len(msgdata)} bytes")

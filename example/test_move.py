@@ -1,7 +1,5 @@
 import doog_can as dc
-import can
 import time
-from doog_can import StatusReport
 
 
 class MortorError(Exception):

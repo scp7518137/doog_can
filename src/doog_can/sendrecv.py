@@ -28,16 +28,24 @@ MAXSIZE = 100
 
 
 class Transmit_Threading(threading.Thread):
+    """Transmit messages over a CAN bus from a background queue.
+
+    Messages are pushed into ``messages`` and sent by the ``run`` loop, keeping
+    all bus writes on a single thread.
+    """
     def __init__(self, bus:can.BusABC) -> None:
+        """Initialize the transmit thread and its message queue."""
         super().__init__(name = "Transmit_Threading", daemon=True)
         self._bus: can.BusABC = bus
         self.messages: queue.Queue[can.Message | None] = queue.Queue(maxsize=MAXSIZE)
 
 
     def transmit_slot(self, msg:can.Message) -> None:
+        """Queue a message for transmission."""
         self.messages.put(msg)
         
     def run(self) -> None:
+        """Send queued messages until a stop sentinel is received."""
         while True:
             msg: can.Message | None = self.messages.get()
             if msg is None:
@@ -45,16 +53,23 @@ class Transmit_Threading(threading.Thread):
             self._bus.send(msg)
 
     def my_start(self) -> None:
+        """Start the transmit thread."""
         self.start()
 
     def my_stop(self) -> None:
+        """Stop the transmit thread and wait for it to finish."""
         self.messages.put(None)
         self.join()
 
 
 class Receive_Threading(threading.Thread):
+    """Receive frames from a CAN bus and distribute them to per-node queues.
+
+    Incoming frames are classified by their ID prefix and pushed into either
+    the normal ``msg_dict`` or the ``fault_msg_dict`` queue for that node.
+    """
     def __init__(self, bus:can.BusABC):
-        """初始化"""
+        """Initialize the receive thread and per-node message queues."""
         super().__init__(name = "Receive_Threading", daemon=True)
         self._bus = bus
         self.running_event = threading.Event()
@@ -69,7 +84,7 @@ class Receive_Threading(threading.Thread):
 
 
     def _filter(self, msg: can.Message) -> None:
-        """判断前缀 对id分类"""
+        """Classify a frame by its ID prefix and route it to the matching queue."""
         frame_id = msg.arbitration_id
         if NODE_ID_200_MIN <= frame_id <= NODE_ID_200_MAX:
             node_id = frame_id - FEEDBACK_FRAME_ID_BASE
@@ -86,7 +101,7 @@ class Receive_Threading(threading.Thread):
             self.msg_dict[node_id].put(msg)
 
     # def receive_nomal_slot(self, node_id) -> can.Message | None:
-    #     """从特定id导出对应的msg"""
+    #     """Pop the message for a specific node ID."""
     #     if node_id in self.msg_dict:
     #         recv_msg = self.msg_dict[node_id].get()
     #     else:
@@ -94,7 +109,7 @@ class Receive_Threading(threading.Thread):
     #     return recv_msg
 
     # def reveive_fault_slot(self) -> can.Message | None:
-    #     """从错误槽提取id"""
+    #     """Pop a message from the fault queues."""
     #     while not all(q.empty() for q in self.fault_msg_dict.values()):
     #         for _, q in self.fault_msg_dict.items():
     #             try:
@@ -105,7 +120,7 @@ class Receive_Threading(threading.Thread):
     #     return None
         
     def run(self) -> None:
-        """运行"""
+        """Receive loop: read frames and route them into the queues."""
         while self.running_event.is_set():
             msg: can.Message | None = self._bus.recv(timeout=0.05)
             if msg is not None:
@@ -115,10 +130,12 @@ class Receive_Threading(threading.Thread):
                     continue
 
     def my_start(self) -> None:
+        """Start the receive loop and the background thread."""
         self.running_event.set()
         self.start()
 
     def my_stop(self) -> None:
+        """Stop the receive loop and wait for the thread to finish."""
         self.running_event.clear()
         self.join()
         

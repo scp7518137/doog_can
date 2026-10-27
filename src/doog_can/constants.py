@@ -112,7 +112,7 @@ class FeedbackMode(IntEnum):
 class SystemStatus(IntEnum):
     """
     0  idle/ready(IDLE)
-    1  running(alignment/open-loop/closed-loop)
+    1  in alignment/open-loop/closed-loop is True
     2  FAULT
     """
     IDLE    = 0

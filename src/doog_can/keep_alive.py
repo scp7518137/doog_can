@@ -32,6 +32,7 @@ class KeepAlive():
             of COMM_TIMEOUT_MS.
     """
     def __init__(self, start_number: int, stop_number: int, send_threading: Transmit_Threading, all_period:float = COMM_TIMEOUT_MS/ 2 / 1000) -> None:
+        """Initialize the keep-alive range, period, and transmit channel."""
         if stop_number - start_number < 0:
             raise ValueError("number not alive")
         if not (NODE_ID_MIN <= start_number <= stop_number <= NODE_ID_MAX):

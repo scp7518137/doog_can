@@ -43,29 +43,32 @@ try:
     motor1.send_mode_cmd(1)
     motor2.send_mode_cmd(1)
 
-    motor1.send_open_to_angle_cmd(10)
-    motor2.send_open_to_angle_cmd(10)
+    motor1.send_ask_open_to_angle_cmd()
+    motor2.send_ask_open_to_angle_cmd()
+
+    # motor1.send_open_to_angle_cmd(10)
+    # motor2.send_open_to_angle_cmd(10)
 
     print_motor(motor1, motor1.decode_normal_code())
     print_motor(motor2, motor2.decode_normal_code())
 
-    motor1.send_open_to_angle_cmd(-10)
-    motor2.send_open_to_angle_cmd(-10)
+    # motor1.send_open_to_angle_cmd(-10)
+    # motor2.send_open_to_angle_cmd(-10)
 
-    print_motor(motor1, motor1.decode_normal_code())
-    print_motor(motor2, motor2.decode_normal_code())
+    # print_motor(motor1, motor1.decode_normal_code())
+    # print_motor(motor2, motor2.decode_normal_code())
 
-    motor1.send_open_to_angle_cmd(10)
-    motor2.send_open_to_angle_cmd(10)
+    # motor1.send_open_to_angle_cmd(10)
+    # motor2.send_open_to_angle_cmd(10)
 
-    print_motor(motor1, motor1.decode_normal_code())
-    print_motor(motor2, motor2.decode_normal_code())
+    # print_motor(motor1, motor1.decode_normal_code())
+    # print_motor(motor2, motor2.decode_normal_code())
 
-    motor1.send_open_to_angle_cmd(-10)
-    motor2.send_open_to_angle_cmd(-10)
+    # motor1.send_open_to_angle_cmd(-10)
+    # motor2.send_open_to_angle_cmd(-10)
 
-    print_motor(motor1, motor1.decode_normal_code())
-    print_motor(motor2, motor2.decode_normal_code())
+    # print_motor(motor1, motor1.decode_normal_code())
+    # print_motor(motor2, motor2.decode_normal_code())
 
 
 
